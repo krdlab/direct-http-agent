@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:3.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - "/var/lib/direct-http-agent/mongodb:/data/db"
+  agent:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
