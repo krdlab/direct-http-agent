@@ -37,8 +37,13 @@ passport.use(
 
 const app = express();
 
+app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(passport.initialize());
+
+app.get('/', (req, res) => {
+  res.render('index', {});
+});
 
 app.get('/login', passport.authenticate('direct'));
 
