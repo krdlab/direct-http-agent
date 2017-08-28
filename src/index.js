@@ -11,7 +11,7 @@ const Direct = require("direct-js").DirectAPI;
 const model = require('./model');
 const authorize = require('./authorize');
 const webhooks = require('./webhooks');
-const api = require('./resources');
+const dapi = require('./direct-api');
 
 const authenticated = async (iss, sub, profile, accessToken, refreshToken, next) => {
   try {
@@ -57,8 +57,8 @@ app.get('/login/cb', passport.authenticate('direct', { failureRedirect: '/login'
 app.use('/webhooks', authorize);
 app.use('/webhooks', webhooks);
 
-app.use('/api', authorize);
-app.use('/api', api);
+app.use('/dapi', authorize);
+app.use('/dapi', dapi);
 
 app.listen(3000, () => {
   console.log('service is listening on port 3000...');
