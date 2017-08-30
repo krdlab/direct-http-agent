@@ -8,9 +8,12 @@ RUN chmod +x /tini
 
 WORKDIR /work
 
-COPY . .
+COPY package-lock.json .
+COPY package.json .
 
 RUN npm install
+
+COPY . .
 
 ENV NODE_MONGODB_HOST mongodb
 EXPOSE 3000
