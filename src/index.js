@@ -2,6 +2,7 @@ require('dotenv').load();
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 const passport = require('passport');
 const DirectPassportStrategy = require('passport-direct-openidconnect').Strategy;
 const crypto = require('crypto');
@@ -9,7 +10,7 @@ const crypto = require('crypto');
 const Direct = require("direct-js").DirectAPI;
 
 const model = require('./model');
-const authorize = require('./authorize');
+const auth = require('./authorize');
 const webhooks = require('./webhooks');
 const dapi = require('./direct-api');
 
@@ -37,27 +38,37 @@ passport.use(
 
 const app = express();
 
+const sessionOptions = {
+  secret: crypto.randomBytes(32).toString('hex'),
+  cookie: {}
+};
+if (app.get('env') == 'production') {
+  sessionOptions.cookie.secure = true;
+}
+
 app.set('view engine', 'pug');
 app.use(bodyParser.json());
+app.use(session(sessionOptions));
 app.use(passport.initialize());
 
 app.get('/', (req, res) => {
   res.render('index', {});
 });
 
-app.get('/login', passport.authenticate('direct'));
+app.get('/login',    passport.authenticate('direct'));
+app.get('/login/cb', passport.authenticate('direct', { failureRedirect: '/login', session: false }), (req, res) => {
+  req.session.user = req.user;
+  res.redirect('/home');
+});
 
-app.get('/login/cb', passport.authenticate('direct', { failureRedirect: '/login', session: false }),
-  (req, res) => {
-    res.header('Content-Type', 'application/json; charset=utf-8');
-    res.send(req.user);  // FIXME
-  }
-);
+app.get('/home', auth.checkSession, (req, res) => {
+  res.render('home', {user: req.session.user});
+});
 
-app.use('/webhooks', authorize);
+app.use('/webhooks', auth.checkApiToken);
 app.use('/webhooks', webhooks);
 
-app.use('/dapi', authorize);
+app.use('/dapi', auth.checkApiToken);
 app.use('/dapi', dapi);
 
 app.listen(3000, () => {
