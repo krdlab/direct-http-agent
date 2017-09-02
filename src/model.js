@@ -50,8 +50,18 @@ const findOrCreateUserById = async (id, profile, accessToken) => {
   return await _user(res, profile, accessToken).save();
 };
 
+const passportAuthorized = async (iss, sub, profile, accessToken, refreshToken, next) => {
+  try {
+    const user = await model.findOrCreateUserById(sub, profile, accessToken);
+    next(null, user);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   User: User,
   WebHook: WebHook,
-  findOrCreateUserById: findOrCreateUserById
+  findOrCreateUserById: findOrCreateUserById,
+  passportAuthorized: passportAuthorized
 };
