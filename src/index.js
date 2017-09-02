@@ -6,7 +6,7 @@ const session     = require('express-session');
 const passport    = require('passport');
 const crypto      = require('crypto');
 const model       = require('./model');
-const auth        = require('./authorize');
+const auth        = require('./auth');
 const webhooks    = require('./webhooks');
 const dapi        = require('./direct-api');
 
