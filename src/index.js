@@ -9,6 +9,7 @@ const model       = require('./model');
 const auth        = require('./auth');
 const webhooks    = require('./webhooks');
 const dapi        = require('./direct-api');
+const control     = require('./control');
 
 // passport
 const DirectPassportStrategy = require('passport-direct-openidconnect').Strategy;
@@ -38,6 +39,7 @@ app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use('/webhooks', auth.checkApiToken, webhooks);
 app.use('/dapi', auth.checkApiToken, dapi);
+app.use('/control', auth.checkApiToken, control);
 
 app.get('/', (req, res) => {
   res.render('index', {});
