@@ -1,14 +1,19 @@
 const router = require('express').Router();
 const model  = require('./model');
 
-router.get('/domains', async (req, res) => {
+const findClient = (req, res, next) => {
   const client = model.findClientByUser(req.user);
   if (client) {
-    const domains = await client.getDomains();
-    res.send(domains);
+    req.client = client;
+    next();
   } else {
     res.sendStatus(404);
   }
+};
+
+router.get('/domains', findClient, async (req, res) => {
+  const domains = await req.client.getDomains();
+  res.send(domains);
 });
 
 router.get('/domains/:domainId/talks', (req, res) => {
