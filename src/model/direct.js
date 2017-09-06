@@ -1,4 +1,4 @@
-// file: src/worker.js
+// file: src/model/direct.js
 const Direct = require("direct-js").DirectAPI;
 
 process.on('message', (msg) => {
@@ -9,8 +9,12 @@ const dispatch = (msg) => {
   switch (msg.method) {
     case 'start':
       start(msg, msg.user);
+      break;
     case 'getDomains':
       getDomains(msg);
+      break;
+    default:
+      console.error(`not implemented: ${msg}`);
   }
 };
 

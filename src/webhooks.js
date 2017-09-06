@@ -15,10 +15,4 @@ router.delete('/:id', (req, res) => {
   res.send('');
 });
 
-router.post('/:id/restart', (req, res) => {
-  console.log(req.method, req.path);
-  // TODO: Direct インスタンスを再作成 & listen
-  res.send('');
-});
-
 module.exports = router;

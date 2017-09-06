@@ -2,7 +2,7 @@ const cluster = require('cluster');
 const EventEmitter = require('events');
 
 cluster.setupMaster({
-  exec: './src/worker.js'
+  exec: './src/model/direct.js'
 });
 
 class DirectClientManager {
