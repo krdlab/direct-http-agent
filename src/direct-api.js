@@ -16,9 +16,9 @@ router.get('/domains', findClient, async (req, res) => {
   res.send(domains);
 });
 
-router.get('/domains/:domainId/talks', (req, res) => {
-  console.log(req.method, req.path);
-  res.send('');
+router.get('/domains/:domainId/talks', findClient, async (req, res) => {
+  const talks = await req.client.getTalks(req.params.domainId);
+  res.send(talks);
 });
 
 router.get('/domains/:domainId/talks/:talkId/messages', (req, res) => {

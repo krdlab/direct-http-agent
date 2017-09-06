@@ -101,6 +101,15 @@ class DirectClient {
       });
     });
   }
+
+  getTalks(domainId) { // :: self => String -> Promise [Talk]
+    return new Promise((resolve, reject) => {
+      this.worker.send({method: 'getTalks', domainId});
+      this.response.once('getTalks', (msg) => {
+        resolve(msg.result);
+      });
+    });
+  }
 }
 
 module.exports = DirectClientManager;
