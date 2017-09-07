@@ -1,7 +1,7 @@
 {
   "name": "direct-http-agent",
   "version": "0.1.0",
-  "description": "HTTP agent as direct api endpoints and webhooks",
+  "description": "Provide REST API and Webhook for direct",
   "private": true,
   "main": "src/index.js",
   "scripts": {

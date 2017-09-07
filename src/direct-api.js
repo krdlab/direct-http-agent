@@ -22,7 +22,7 @@ router.get('/domains/:domainId/talks', findClient, async (req, res) => {
 });
 
 router.get('/domains/:domainId/talks/:talkId/messages', (req, res) => {
-  console.log(req.method, req.path);
+  console.log(req.method, req.path);  // TODO
   res.send('');
 });
 
