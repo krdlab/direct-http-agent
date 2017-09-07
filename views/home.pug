@@ -9,13 +9,13 @@ html
     div(class="container")
       br
       h3(class="header center-align teal-text") API 一覧
-      p(class="center-align") Authorization ヘッダーには，あなたの API トークン値が表示されています．各コマンドはコピーしてそのまま利用できます．
+      p(class="center-align") Authorization ヘッダーにはあなたの API トークン値が表示されています．各コマンドはコピーしてそのまま利用できます．
       div(class="row")
         div(class="col s12")
-          div(class="card")
+          div(class="card hoverable")
             div(class="card-content")
               span(class="card-title") 組織一覧の取得
-              p(class="grey lighten-5")
+              div
                 pre
                   code(class="bash").
                     $ curl -s -H 'Authorization: Bearer #{user.apiToken}' https://direct-agent.krdlab.com/dapi/domains
@@ -29,10 +29,10 @@ html
                         name: "組織2"
                       }
                     ]
-          div(class="card")
+          div(class="card hoverable")
             div(class="card-content")
               span(class="card-title") トーク一覧の取得
-              p(class="grey lighten-5")
+              div
                 pre
                   code(class="bash").
                     $ curl -s -H 'Authorization: Bearer #{user.apiToken}' https://direct-agent.krdlab.com/dapi/domains/${DOMAIN_ID}/talks
@@ -46,13 +46,16 @@ html
                         name: "トーク2"
                       }
                     ]
-          div(class="card")
+          div(class="card hoverable")
             div(class="card-content")
               span(class="card-title") メッセージの送信
-              p(class="grey lighten-5")
+              div
                 pre
                   code(class="bash").
                     $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -H 'Content-Type: application/json' -X POST -d '{"text":"こんにちは"}' https://direct-agent.krdlab.com/dapi/domains/${DOMAIN_ID}/talks/${TALK_ID}/messages
+          div(class="card hoverable")
+            div(class="card-content")
+              span(class="card-title") Webhook 系は未実装
 
     script(type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js")
     script(type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js")
