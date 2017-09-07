@@ -26,4 +26,9 @@ router.get('/domains/:domainId/talks/:talkId/messages', (req, res) => {
   res.send('');
 });
 
+router.post('/domains/:domainId/talks/:talkId/messages', findClient, async (req, res) => {
+  const result = await req.client.sendTextMessage(req.params.talkId, req.body);
+  res.send(result);
+});
+
 module.exports = router;

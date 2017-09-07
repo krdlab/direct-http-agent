@@ -16,6 +16,9 @@ const dispatch = (msg) => {
     case 'getTalks':
       getTalks(msg, msg.domainId);
       break;
+    case 'sendTextMessage':
+      sendTextMessage(msg, msg.talkId, msg.content);
+      break;
     default:
       console.error(`not implemented: ${msg}`);
   }
@@ -53,4 +56,16 @@ const getTalks = (msg, domainId) => {
       .sort((a, b) => asc(a.id, b.id))
       .map(t => ({id: str(t.id), name: t.name, type: t.type[0], userIds: (t.userIds || []).map(i => str(i))}));
   process.send({method: msg.method, result});
+};
+
+const makeIdStr = (d, s) => {
+  const i = d.parseInt64(s);
+  return `_${i.high}_${i.low}`;
+};
+
+const sendTextMessage = (msg, talkId, content) => {
+  const room = makeIdStr(direct, talkId);
+  const text = content.text || content;
+  direct.send({room}, text);
+  process.send({method: msg.method, result: 'OK'});
 };

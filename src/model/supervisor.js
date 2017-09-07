@@ -110,6 +110,16 @@ class DirectClient {
       });
     });
   }
+
+  sendTextMessage(talkId, content) {
+    const method = 'sendTextMessage';
+    return new Promise((resolve, reject) => {
+      this.worker.send({method, talkId, content});
+      this.response.once(method, (msg) => {
+        resolve(msg.result);
+      });
+    });
+  }
 }
 
 module.exports = DirectClientManager;
