@@ -14,4 +14,5 @@ $ docker-compose -f docker-compose.yml -f docker-compose.vps.yml   up -d
 ```sh
 $ curl -H 'Authorization: Bearer <api token>' https://direct-agent.krdlab.com/dapi/domains/${DOMAIN_ID}/talks
 $ curl -H 'Authorization: Bearer <api token>' https://direct-agent.krdlab.com/webhooks
+$ curl -H 'Authorization: Bearer <api token>' https://direct-agent.krdlab.com/control/restart
 ```
