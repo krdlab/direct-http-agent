@@ -27,6 +27,7 @@ passport.use(new DirectPassportStrategy(directPassportOptions, model.passportAut
 const app = express();
 
 const sessionOptions = {
+  name: 'sessionid',
   secret: crypto.randomBytes(32).toString('hex'),
   cookie: {}
 };
