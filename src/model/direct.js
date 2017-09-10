@@ -7,20 +7,20 @@ process.on('message', (msg) => {
 
 const dispatch = (msg) => {
   switch (msg.method) {
-    case 'start':
-      start(msg, msg.user);
-      break;
-    case 'getDomains':
-      getDomains(msg);
-      break;
-    case 'getTalks':
-      getTalks(msg, msg.domainId);
-      break;
-    case 'sendTextMessage':
-      sendTextMessage(msg, msg.talkId, msg.content);
-      break;
-    default:
-      console.error(`not implemented: ${msg}`);
+  case 'start':
+    start(msg, msg.user);
+    break;
+  case 'getDomains':
+    getDomains(msg);
+    break;
+  case 'getTalks':
+    getTalks(msg, msg.domainId);
+    break;
+  case 'sendTextMessage':
+    sendTextMessage(msg, msg.talkId, msg.content);
+    break;
+  default:
+    console.error(`not implemented: ${msg}`);
   }
 };
 
@@ -39,7 +39,6 @@ const start = (msg, user) => {
 };
 
 const asc   = (a, b) => ((a.high - b.high) || (a.low - b.low));
-const equal = (a, b) => (a.high === b.high && a.low === b.low);
 
 const getDomains = (msg) => {
   const ds = direct.data.getDomains();
@@ -52,9 +51,9 @@ const getTalks = (msg, domainId) => {
   const ts = direct.data.getTalks();
   const str = direct.stringifyInt64;
   const result = ts
-      .filter((t, i, a) => str(t.domainId) === domainId)
-      .sort((a, b) => asc(a.id, b.id))
-      .map(t => ({id: str(t.id), name: t.name, type: t.type[0], userIds: (t.userIds || []).map(i => str(i))}));
+    .filter((t) => str(t.domainId) === domainId)
+    .sort((a, b) => asc(a.id, b.id))
+    .map(t => ({id: str(t.id), name: t.name, type: t.type[0], userIds: (t.userIds || []).map(i => str(i))}));
   process.send({method: msg.method, result});
 };
 
