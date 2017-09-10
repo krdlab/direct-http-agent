@@ -20,5 +20,8 @@
     "passport": "^0.4.0",
     "passport-direct-openidconnect": "^0.1.1",
     "pug": "^2.0.0-rc.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.6.1"
   }
 }
