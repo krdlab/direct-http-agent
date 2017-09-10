@@ -32,6 +32,7 @@ const sessionOptions = {
   cookie: {}
 };
 if (app.get('env') == 'production') {
+  app.set('trust proxy', 1);
   sessionOptions.cookie.secure = true;
 }
 
