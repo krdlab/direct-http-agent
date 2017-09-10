@@ -1,6 +1,7 @@
 require('dotenv').load();
 
 const express     = require('express');
+const helmet      = require('helmet');
 const bodyParser  = require('body-parser');
 const session     = require('express-session');
 const passport    = require('passport');
@@ -34,6 +35,7 @@ if (app.get('env') == 'production') {
 }
 
 app.set('view engine', 'pug');
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(session(sessionOptions));
 app.use(passport.initialize());
