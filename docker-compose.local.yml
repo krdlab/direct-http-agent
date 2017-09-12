@@ -4,3 +4,6 @@ services:
   mongodb:
     volumes:
       - "./data/mongodb:/data/db"
+  agent:
+    volumes:
+      - "./etc/agent:/etc/agent"

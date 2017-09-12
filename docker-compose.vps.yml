@@ -7,3 +7,5 @@ services:
   agent:
     environment:
       NODE_ENV: production
+    volumes:
+      - "/etc/direct-http-agent/agent:/etc/agent"

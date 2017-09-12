@@ -1,4 +1,4 @@
-require('dotenv').load();
+require('dotenv').load({path: '/etc/agent/.env'});
 
 const express     = require('express');
 const helmet      = require('helmet');
