@@ -14,6 +14,14 @@ html
         div(class="col s12")
           div(class="card hoverable")
             div(class="card-content")
+              span(class="card-title") agent の再起動
+              p なんか調子が悪いな，というときに実行してください．
+              div
+                pre
+                  code(class="bash").
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -X POST https://direct-agent.krdlab.com/control/restart
+          div(class="card hoverable")
+            div(class="card-content")
               span(class="card-title") 組織一覧の取得
               div
                 pre
