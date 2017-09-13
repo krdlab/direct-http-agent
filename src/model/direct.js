@@ -17,7 +17,7 @@ const dispatch = (msg) => {
     getTalks(msg, msg.domainId);
     break;
   case 'sendTextMessage':
-    sendTextMessage(msg, msg.talkId, msg.content);
+    sendTextMessage(msg, msg.domainId, msg.talkId, msg.content);
     break;
   default:
     console.error(`not implemented: ${msg}`);
@@ -57,14 +57,27 @@ const getTalks = (msg, domainId) => {
   process.send({method: msg.method, result});
 };
 
+const existsTalk = (domainId, talkId) => {
+  const ts = direct.data.getTalks();
+  const str = direct.stringifyInt64;
+  const result = ts
+    .filter((t) => str(t.domainId) === domainId)
+    .filter((t) => str(t.id) === talkId);
+  return result.length > 0;
+};
+
 const makeIdStr = (d, s) => {
   const i = d.parseInt64(s);
   return `_${i.high}_${i.low}`;
 };
 
-const sendTextMessage = (msg, talkId, content) => {
-  const room = makeIdStr(direct, talkId);
-  const text = content.text || content;
-  direct.send({room}, text);
-  process.send({method: msg.method, result: 'OK'});
+const sendTextMessage = (msg, domainId, talkId, content) => {
+  if (existsTalk(domainId, talkId)) {
+    const room = makeIdStr(direct, talkId);
+    const text = content.text || content;
+    direct.send({room}, text);
+    process.send({method: msg.method, result: 'OK'});
+  } else {
+    process.send({method: msg.method, error: 'NotFound'});
+  }
 };

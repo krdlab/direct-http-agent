@@ -27,8 +27,17 @@ router.get('/domains/:domainId/talks/:talkId/messages', (req, res) => {
 });
 
 router.post('/domains/:domainId/talks/:talkId/messages', findClient, async (req, res) => {
-  const result = await req.client.sendTextMessage(req.params.talkId, req.body);
-  res.send(result);
+  const q = req.params;
+  const result = await req.client.sendTextMessage(q.domainId, q.talkId, req.body)
+    .then(r => ({status: 200, body: r}))
+    .catch(err => {
+      if (err === 'NotFound') {
+        return {status: 404, body: ''};
+      } else {
+        return {status: 500, body: ''};
+      }
+    });
+  res.status(result.status).send(result.body);
 });
 
 module.exports = router;

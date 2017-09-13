@@ -111,12 +111,16 @@ class DirectClient {
     });
   }
 
-  sendTextMessage(talkId, content) {
+  sendTextMessage(domainId, talkId, content) {
     const method = 'sendTextMessage';
     return new Promise((resolve, reject) => {
-      this.worker.send({method, talkId, content});
+      this.worker.send({method, domainId, talkId, content});
       this.response.once(method, (msg) => {
-        resolve(msg.result);
+        if (msg.error) {
+          reject(msg.error);
+        } else {
+          resolve(msg.result);
+        }
       });
     });
   }
