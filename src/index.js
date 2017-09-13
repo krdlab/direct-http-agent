@@ -24,6 +24,7 @@ const directPassportOptions = {
 passport.use(new DirectPassportStrategy(directPassportOptions, model.passportAuthorized));
 
 // express
+const SERVICE_BASE_URL = process.env.NODE_SERVICE_BASE_URL;
 const app = express();
 
 const sessionOptions = {
@@ -54,7 +55,11 @@ app.get('/login/cb', passport.authenticate('direct', { failureRedirect: '/login'
   res.redirect('/home');
 });
 app.get('/home', auth.checkSession, (req, res) => {
-  res.render('home', {user: req.session.user});
+  const data = {
+    serviceBaseUrl: SERVICE_BASE_URL,
+    user: req.session.user
+  };
+  res.render('home', data);
 });
 
 // start service

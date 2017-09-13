@@ -19,14 +19,14 @@ html
               div
                 pre
                   code(class="bash").
-                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -X POST https://direct-agent.krdlab.com/control/restart
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -X POST #{serviceBaseUrl}/control/restart
           div(class="card hoverable")
             div(class="card-content")
               span(class="card-title") 組織一覧の取得
               div
                 pre
                   code(class="bash").
-                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' https://direct-agent.krdlab.com/dapi/domains
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' #{serviceBaseUrl}/dapi/domains
                     [
                       {
                         id: "1234567890",
@@ -43,7 +43,7 @@ html
               div
                 pre
                   code(class="bash").
-                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' https://direct-agent.krdlab.com/dapi/domains/${DOMAIN_ID}/talks
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' #{serviceBaseUrl}/dapi/domains/${DOMAIN_ID}/talks
                     [
                       {
                         id: "12345678900",
@@ -60,7 +60,7 @@ html
               div
                 pre
                   code(class="bash").
-                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -H 'Content-Type: application/json' -X POST -d '{"text":"こんにちは"}' https://direct-agent.krdlab.com/dapi/domains/${DOMAIN_ID}/talks/${TALK_ID}/messages
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -H 'Content-Type: application/json' -X POST -d '{"text":"こんにちは"}' #{serviceBaseUrl}/dapi/domains/${DOMAIN_ID}/talks/${TALK_ID}/messages
           div(class="card hoverable")
             div(class="card-content")
               span(class="card-title") Webhook 系は未実装
