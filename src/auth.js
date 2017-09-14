@@ -1,5 +1,4 @@
-// file: src/authorize.js
-
+// file: src/auth.js
 const model = require('./model');
 
 module.exports = {
@@ -24,5 +23,14 @@ module.exports = {
         res.header('Content-Type', 'application/json; charset=utf-8');
         res.sendStatus(403);
       });
+  },
+  findClient(req, res, next) {
+    const client = model.findClientByUser(req.user);
+    if (client) {
+      req.client = client;
+      next();
+    } else {
+      res.sendStatus(404);
+    }
   }
 };
