@@ -1,5 +1,5 @@
 // file: src/model/direct.js
-const Direct = require("direct-js").DirectAPI;
+const DirectAPI = require("direct-js").DirectAPI;
 
 process.on('message', (msg) => {
   dispatch(msg);
@@ -27,14 +27,15 @@ const dispatch = (msg) => {
 let direct = null;
 
 const start = (msg, user) => {
-  const d = new Direct();
+  const d = DirectAPI.getInstance();
   d.setOptions({
     host: 'api.direct4b.com',
     endpoint: 'wss://api.direct4b.com/albero-app-server/api',
     access_token: user.directApiToken
+    // TODO: storage_path
   });
   d.listen();
-  direct = d; // NOTE: global variable
+  direct = d; // FIXME: global variable
   process.send({method: msg.method, result: 'OK'});
 };
 
