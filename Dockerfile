@@ -13,6 +13,7 @@ COPY package-lock.json .
 COPY package.json .
 
 RUN npm install
+RUN sed -i -e "s/,this\.getOSString()//" node_modules/direct-js/lib/direct-node.min.js
 
 COPY . .
 
