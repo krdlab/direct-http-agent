@@ -14,6 +14,7 @@ COPY package.json .
 
 RUN npm install
 RUN sed -i -e "s/,this\.getOSString()//" node_modules/direct-js/lib/direct-node.min.js
+RUN sed -i -e "s/else a()},j()}},getDomains/},a()}},getDomains/" node_modules/direct-js/lib/direct-node.min.js
 
 COPY . .
 
