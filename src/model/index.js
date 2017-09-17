@@ -63,6 +63,11 @@ const restartClient = (user) => {
   return supervisor.restart(user);
 };
 
+const deleteUser = async (user) => {
+  await supervisor.removeClient(user);
+  await db.User.deleteOne({_id: user._id}).exec();
+};
+
 module.exports = {
   User: db.User,
   WebHook: db.WebHook,
@@ -70,5 +75,6 @@ module.exports = {
   findUserByApiToken: findUserByApiToken,
   passportAuthorized: passportAuthorized,
   findClientByUser: findClientByUser,
-  restartClient: restartClient
+  restartClient: restartClient,
+  deleteUser: deleteUser
 };

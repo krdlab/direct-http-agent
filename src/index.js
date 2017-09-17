@@ -61,6 +61,14 @@ app.get('/home', auth.checkSession, (req, res) => {
   };
   res.render('home', data);
 });
+app.post('/logout', async (req, res) => {
+  if (req.session && req.session.user) {
+    await model.deleteUser(req.session.user);
+    delete req.session.user;
+  }
+  delete req.user;
+  res.redirect('/');
+});
 
 // start service
 app.listen(3000, () => { console.log('service is listening on port 3000...'); });

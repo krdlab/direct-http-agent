@@ -7,6 +7,9 @@ html
     title Home - direct HTTP agent
   body
     div(class="container")
+      div(class="right-align")
+        form(method="POST" action="/logout")
+          button(type="submit" class="waves-effect waves-light btn") Logout
       br
       h3(class="header center-align teal-text") API 一覧
       p(class="center-align") Authorization ヘッダーにはあなたの API トークン値が表示されています．各コマンドはコピーしてそのまま利用できます．

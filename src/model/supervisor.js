@@ -52,6 +52,11 @@ class DirectClientManager {
   findByUserId(userId) { // :: self => String -> DirectClient
     return this.clients[userId];
   }
+
+  removeClient(user) {
+    const c = this.findByUserId(user._id);
+    return this._closeIfNeeded(c);
+  }
 }
 
 class DirectClient {
