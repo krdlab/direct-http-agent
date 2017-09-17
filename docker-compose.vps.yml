@@ -9,3 +9,4 @@ services:
       NODE_ENV: production
     volumes:
       - "/etc/direct-http-agent/agent:/etc/agent"
+      - "/var/lib/direct-http-agent/storage.local:/data/storage.local"

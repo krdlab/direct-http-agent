@@ -1,4 +1,5 @@
 // file: src/model/direct.js
+const fs = require('fs');
 const DirectAPI = require("direct-js").DirectAPI;
 
 process.on('message', (msg) => {
@@ -62,12 +63,15 @@ class Client {
   }
 
   static _startAs(user) {
+    const storagePath = `/data/storage.local/${user._id}`;
+    fs.existsSync(storagePath) || fs.mkdirSync(storagePath, 0o755);
+
     const d = DirectAPI.getInstance();
     d.setOptions({
       host: 'api.direct4b.com',
       endpoint: 'wss://api.direct4b.com/albero-app-server/api',
-      access_token: user.directApiToken
-      // TODO: storage_path
+      access_token: user.directApiToken,
+      storage_path: storagePath
     });
     d.listen();
     return d;

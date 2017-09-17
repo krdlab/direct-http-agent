@@ -7,3 +7,4 @@ services:
   agent:
     volumes:
       - "./etc/agent:/etc/agent"
+      - "./data/storage.local:/data/storage.local"
