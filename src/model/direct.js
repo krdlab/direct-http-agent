@@ -1,6 +1,7 @@
 // file: src/model/direct.js
 const fs = require('fs');
 const DirectAPI = require("direct-js").DirectAPI;
+const webhook = require('./webhook');
 
 process.on('message', (msg) => {
   dispatch(msg);
@@ -29,6 +30,7 @@ let client = null;
 
 const start = (msg, user) => {
   client = new Client(user);
+  client.start();
   process.send({method: msg.method, result: 'OK'});
 };
 
@@ -56,13 +58,15 @@ const byIdAsc = (a, b) => idAsc(a.id, b.id)
 class Client {
   constructor(user) {
     this.user = user;
-    this.client = Client._startAs(user);
+    this.client = Client._create(user);
 
-    this._strId = this._strId.bind(this);
-    this._makeIdStr = this._makeIdStr.bind(this);
+    this._int64ToDecimalStr = this._int64ToDecimalStr.bind(this);
+    this._decimalStrToHLStr = this._decimalStrToHLStr.bind(this);
+    this._hlStrToDecimalStr = this._hlStrToDecimalStr.bind(this);
+    this._handleTextMessage = this._handleTextMessage.bind(this);
   }
 
-  static _startAs(user) {
+  static _create(user) {
     const storagePath = `/data/storage.local/${user._id}`;
     fs.existsSync(storagePath) || fs.mkdirSync(storagePath, 0o755);
 
@@ -73,17 +77,43 @@ class Client {
       access_token: user.directApiToken,
       storage_path: storagePath
     });
-    d.listen();
     return d;
   }
 
-  _strId(i) {
-    return this.client.stringifyInt64(i);
+  start() {
+    this.client.on('TextMessage', this._handleTextMessage);
+    this.client.listen();
   }
 
-  _makeIdStr(s) {
-    const i = this.client.parseInt64(s);
+  _handleTextMessage(talk, author, msg) {
+    const userId = this.user._id;
+
+    const domainId = talk.rooms[talk.room].domainId;
+    const talkId   = talk.room;
+    const authorId = author.id;
+    const text     = msg.content;
+    const event    = new webhook.DirectEvent(domainId, talkId, authorId, text, this._decimalStrToHLStr);
+
+    webhook.findByEvent(userId, event)
+      .then(hooks => hooks.map(hook => hook.execute()))
+      .then(ps => Promise.all(ps))
+      .then(res => console.log(`${res.length} webhook(s) executed`)) // FIXME
+      .catch(console.error); // FIXME: save as event history
+  }
+
+  _int64ToDecimalStr(i) { // :: self => Int64 -> String
+    return this.client.stringifyInt64(i); // signed decimal string representation of i
+  }
+
+  _decimalStrToHLStr(s) { // :: self => String -> String
+    const i = this.client.parseInt64(s); // input decimal string
     return `_${i.high}_${i.low}`;
+  }
+
+  // FIXME: doesn't work
+  _hlStrToDecimalStr(s) { // :: self => String -> String
+    const res = /^_(-?\d*)_(-?\d*)$/.exec(s);
+    return this._int64ToDecimalStr({high: Number(res[1]), low: Number(res[2])});
   }
 
   _getDomains() {
@@ -96,7 +126,7 @@ class Client {
 
   _existsTalkInDomain(talkId, domainId) {
     const ts  = this._getTalks();
-    const str = this._strId;
+    const str = this._int64ToDecimalStr;
     const res = ts
       .filter((t) => str(t.domainId) === domainId)
       .filter((t) => str(t.id) === talkId);
@@ -105,7 +135,7 @@ class Client {
 
   getDomains() {
     const ds  = this._getDomains();
-    const str = this._strId;
+    const str = this._int64ToDecimalStr;
     const res = ds
       .sort(byIdAsc)
       .map(d => ({id: str(d.id), name: d.domainInfo.name}));
@@ -114,7 +144,7 @@ class Client {
 
   getTalks(domainId) {
     const ts  = this._getTalks();
-    const str = this._strId;
+    const str = this._int64ToDecimalStr;
     const res = ts
       .filter((t) => str(t.domainId) === domainId)
       .sort(byIdAsc)
@@ -129,7 +159,7 @@ class Client {
 
   sendTextMessage(domainId, talkId, text) { // :: self => String -> String -> String -> Promise ()
     if (this._existsTalkInDomain(talkId, domainId)) {
-      const room = this._makeIdStr(talkId);
+      const room = this._decimalStrToHLStr(talkId);
       this.client.send({room}, text);
       return Promise.resolve('OK');
     } else {

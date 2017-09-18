@@ -64,12 +64,12 @@ class DirectClient {
     this.user = user;
     this.worker = worker;
     this.response = new EventEmitter();
-    this._handleResponse = this._handleResponse.bind(this);
+    this._handleMessage = this._handleMessage.bind(this);
 
-    this.worker.on('message', this._handleResponse);
+    this.worker.on('message', this._handleMessage);
   }
 
-  _handleResponse(msg) {
+  _handleMessage(msg) {
     this.response.emit(msg.method, msg);
   }
 

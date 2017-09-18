@@ -1,4 +1,5 @@
 const db = require('./db');
+const webhook = require('./webhook');
 const Supervisor = require('./supervisor');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
@@ -68,6 +69,8 @@ const deleteUser = async (user) => {
   await db.User.deleteOne({_id: user._id}).exec();
 };
 
+const addWebhook = webhook.add;
+
 module.exports = {
   User: db.User,
   WebHook: db.WebHook,
@@ -76,5 +79,6 @@ module.exports = {
   passportAuthorized: passportAuthorized,
   findClientByUser: findClientByUser,
   restartClient: restartClient,
-  deleteUser: deleteUser
+  deleteUser: deleteUser,
+  addWebhook: addWebhook
 };
