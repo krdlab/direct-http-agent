@@ -102,6 +102,15 @@ html
                     ]
           div(class="card hoverable")
             div(class="card-content")
+              span(class="card-title") 登録済 Webhook の削除
+              p WEBHOOK_ID は GET /webhooks で取得した _id の値です．
+              div
+                pre
+                  code(class="bash").
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -X DELETE #{serviceBaseUrl}/webhooks/${WEBHOOK_ID}
+
+          div(class="card hoverable")
+            div(class="card-content")
               span(class="card-title") agent の再起動
               p なんか調子が悪いなー，というときに実行してください．
               div

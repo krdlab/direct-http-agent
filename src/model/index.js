@@ -79,5 +79,6 @@ module.exports = {
   restartClient: restartClient,
   deleteUser: deleteUser,
   addWebhook: webhook.add,
-  getWebhooks: webhook.getAll
+  getWebhooks: webhook.getAll,
+  deleteWebhook: webhook.remove
 };

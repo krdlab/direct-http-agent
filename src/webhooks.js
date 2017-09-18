@@ -12,9 +12,9 @@ router.get('/', async (req, res) => {
   res.send(result);
 });
 
-router.delete('/:id', (req, res) => {
-  console.log(req.method, req.path);
-  res.send('');
+router.delete('/:id', async (req, res) => {
+  const result = await model.deleteWebhook(req.user, req.params.id);
+  res.send(result);
 });
 
 module.exports = router;

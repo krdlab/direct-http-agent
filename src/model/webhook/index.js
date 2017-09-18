@@ -30,5 +30,17 @@ module.exports = {
   async getAll(user) {
     const u = await db.User.findById(user._id).exec();
     return u.webhooks;
+  },
+
+  async remove(user, webhookId) {
+    const u = await db.User.findById(user._id).exec();
+    const wh = u.webhooks.id(webhookId);
+    if (wh) {
+      wh.remove();
+      await u.save();
+      return { _id: webhookId, removed: true };
+    } else {
+      return { _id: webhookId, removed: false };
+    }
   }
 }
