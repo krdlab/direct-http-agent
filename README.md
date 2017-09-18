@@ -28,8 +28,8 @@ Please see `/home`.
 - [x] `GET /dapi/domains`
 - [x] `GET /dapi/domains/:domainId/talks`
 - [x] `POST /dapi/domains/:domainId/talks/:talkId/messages`
-- [ ] `GET /webhooks`
-- [ ] `POST /webhooks`
+- [x] `GET /webhooks`
+- [x] `POST /webhooks`
 - [ ] `GET /webhooks/:webhookId`
 - [ ] `PUT /webhooks/:webhookId`
-- [ ] `DELETE /webhooks/:webhookId`
+- [x] `DELETE /webhooks/:webhookId`
