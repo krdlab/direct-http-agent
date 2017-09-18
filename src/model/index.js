@@ -69,8 +69,6 @@ const deleteUser = async (user) => {
   await db.User.deleteOne({_id: user._id}).exec();
 };
 
-const addWebhook = webhook.add;
-
 module.exports = {
   User: db.User,
   WebHook: db.WebHook,
@@ -80,5 +78,6 @@ module.exports = {
   findClientByUser: findClientByUser,
   restartClient: restartClient,
   deleteUser: deleteUser,
-  addWebhook: addWebhook
+  addWebhook: webhook.add,
+  getWebhooks: webhook.getAll
 };

@@ -25,5 +25,10 @@ module.exports = {
     return user.webhooks
       .filter(hook => event.match(hook))
       .map(hook => new Outgoing(hook));
+  },
+
+  async getAll(user) {
+    const u = await db.User.findById(user._id).exec();
+    return u.webhooks;
   }
 }

@@ -7,9 +7,9 @@ router.post('/', async (req, res) => {
   res.send(result);
 });
 
-router.get('/', (req, res) => {
-  console.log(req.method, req.path);
-  res.send('');
+router.get('/', async (req, res) => {
+  const result = await model.getWebhooks(req.user);
+  res.send(result);
 });
 
 router.delete('/:id', (req, res) => {

@@ -76,6 +76,32 @@ html
                     }'
           div(class="card hoverable")
             div(class="card-content")
+              span(class="card-title") 登録済 Webhook の一覧
+              div
+                pre
+                  code(class="bash").
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' #{serviceBaseUrl}/webhooks
+                    [
+                      {
+                        "_id": "...",
+                        "event": {
+                          "domainId": "...",
+                          "talkId": "...",
+                          "trigger": "...",
+                          "_id": "..."
+                        },
+                        "config": {
+                          "url": "...",
+                          "contentType": "application/json",
+                          "method": "POST"
+                          "_id": "...",
+                        },
+                        "name": "テストWebhook"
+                      },
+                      ...
+                    ]
+          div(class="card hoverable")
+            div(class="card-content")
               span(class="card-title") agent の再起動
               p なんか調子が悪いなー，というときに実行してください．
               div
