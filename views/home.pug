@@ -17,14 +17,6 @@ html
         div(class="col s12")
           div(class="card hoverable")
             div(class="card-content")
-              span(class="card-title") agent の再起動
-              p なんか調子が悪いな，というときに実行してください．
-              div
-                pre
-                  code(class="bash").
-                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -X POST #{serviceBaseUrl}/control/restart
-          div(class="card hoverable")
-            div(class="card-content")
               span(class="card-title") 組織一覧の取得
               div
                 pre
@@ -77,11 +69,19 @@ html
                         "url": "https://your-jenkins-host/job/your-job/build?token=your-jenkins-api-token"
                       },
                       "event": {
-                        "domainId": "組織 ID",
-                        "talkId": "トーク ID",
+                        "domainId": "target-domian-id",
+                        "talkId": "target-talk-id",
                         "trigger": "ビルドしてくれ"
                       }
                     }'
+          div(class="card hoverable")
+            div(class="card-content")
+              span(class="card-title") agent の再起動
+              p なんか調子が悪いなー，というときに実行してください．
+              div
+                pre
+                  code(class="bash").
+                    $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -X POST #{serviceBaseUrl}/control/restart
 
     script(type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js")
     script(type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js")
