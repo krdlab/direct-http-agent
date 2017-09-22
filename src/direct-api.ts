@@ -1,5 +1,7 @@
-const router = require('express').Router();
-const auth  = require('./auth');
+import { Router } from 'express';
+import * as auth from './auth';
+
+const router = Router();
 
 router.get('/domains', auth.findClient, async (req, res) => {
   const domains = await req.client.getDomains();
@@ -19,8 +21,8 @@ router.get('/domains/:domainId/talks/:talkId/messages', (req, res) => {
 router.post('/domains/:domainId/talks/:talkId/messages', auth.findClient, async (req, res) => {
   const q = req.params;
   const result = await req.client.sendTextMessage(q.domainId, q.talkId, req.body)
-    .then(r => ({status: 200, body: r}))
-    .catch(err => {
+    .then((res: string) => ({status: 200, body: res}))
+    .catch((err: string) => {
       if (err === 'NotFound') {
         return {status: 404, body: ''};
       } else {
@@ -30,4 +32,4 @@ router.post('/domains/:domainId/talks/:talkId/messages', auth.findClient, async 
   res.status(result.status).send(result.body);
 });
 
-module.exports = router;
+export default router;

@@ -1,28 +1,31 @@
-const cluster = require('cluster');
-const EventEmitter = require('events');
+import * as cluster from 'cluster';
+import { EventEmitter } from 'events';
+import { IUserModel } from './db';
 
 cluster.setupMaster({
   exec: './src/model/direct.js'
 });
 
-class DirectClientManager {
+export class DirectClientManager {
+  clients: Map<string, DirectClient>;
+
   constructor() {
-    this.clients = {}; // :: Map String Worker
+    this.clients = new Map<string, DirectClient>();
   }
 
-  _register(client) {
-    this.clients[client.userId] = client;
+  _register(client: DirectClient) {
+    this.clients.set(client.userId, client);
   }
 
-  _unregister(client) {
-    delete this.clients[client.userId];
+  _unregister(client: DirectClient) {
+    this.clients.delete(client.userId);
   }
 
   _success() {
     return new Promise((r, _) => { r(); });
   }
 
-  _closeIfNeeded(client) {
+  _closeIfNeeded(client?: DirectClient) {
     if (client == null) {
       return this._success();
     } else {
@@ -31,7 +34,7 @@ class DirectClientManager {
     }
   }
 
-  startAs(user) { // :: self => User -> Promise ()
+  startAs(user: IUserModel) {
     const c = this.findByUserId(user._id);
     if (c == null) {
       const newWorker = cluster.fork();
@@ -44,23 +47,27 @@ class DirectClientManager {
     }
   }
 
-  restart(user) {
+  restart(user: IUserModel) {
     const c = this.findByUserId(user._id);
     return this._closeIfNeeded(c).then(_ => this.startAs(user));
   }
 
-  findByUserId(userId) { // :: self => String -> DirectClient
-    return this.clients[userId];
+  findByUserId(userId: string) {
+    return this.clients.get(userId);
   }
 
-  removeClient(user) {
+  removeClient(user: IUserModel) {
     const c = this.findByUserId(user._id);
     return this._closeIfNeeded(c);
   }
 }
 
 class DirectClient {
-  constructor(user, worker) {
+  user: IUserModel;
+  worker: cluster.Worker;
+  response: EventEmitter;
+
+  constructor(user: IUserModel, worker: cluster.Worker) {
     this.user = user;
     this.worker = worker;
     this.response = new EventEmitter();
@@ -69,11 +76,11 @@ class DirectClient {
     this.worker.on('message', this._handleMessage);
   }
 
-  _handleMessage(msg) {
+  _handleMessage(msg: any) {
     this.response.emit(msg.method, msg);
   }
 
-  get userId() {
+  get userId(): string {
     return this.user._id;
   }
 
@@ -107,7 +114,7 @@ class DirectClient {
     });
   }
 
-  getTalks(domainId) { // :: self => String -> Promise [Talk]
+  getTalks(domainId: string) {
     return new Promise((resolve, reject) => {
       this.worker.send({method: 'getTalks', domainId});
       this.response.once('getTalks', (msg) => {
@@ -116,7 +123,7 @@ class DirectClient {
     });
   }
 
-  sendTextMessage(domainId, talkId, content) {
+  sendTextMessage(domainId: string, talkId: string, content: string) {
     const method = 'sendTextMessage';
     return new Promise((resolve, reject) => {
       this.worker.send({method, domainId, talkId, content});
@@ -130,5 +137,3 @@ class DirectClient {
     });
   }
 }
-
-module.exports = DirectClientManager;

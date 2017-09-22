@@ -1,6 +1,8 @@
 // path: /webhooks
-const router = require('express').Router();
-const model = require('./model');
+import { Router } from 'express';
+import * as model from './model';
+
+const router = Router();
 
 router.post('/', async (req, res) => {
   const result = await model.addWebhook(req.user, req.body);
@@ -17,4 +19,4 @@ router.delete('/:id', async (req, res) => {
   res.send(result);
 });
 
-module.exports = router;
+export default router;

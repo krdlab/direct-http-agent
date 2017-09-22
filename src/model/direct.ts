@@ -1,13 +1,23 @@
 // file: src/model/direct.js
-const fs = require('fs');
+import * as fs from 'fs';
+import * as webhook from './webhook';
+import { IUserModel } from './db';
+
 const DirectAPI = require("direct-js").DirectAPI;
-const webhook = require('./webhook');
 
 process.on('message', (msg) => {
   dispatch(msg);
 });
 
-const dispatch = (msg) => {
+interface IpcMessage { // FIXME
+  method: string;
+  user?: any;
+  domainId?: string;
+  talkId?: string;
+  content?: any;
+}
+
+const dispatch = (msg: IpcMessage) => {
   switch (msg.method) {
   case 'start':
     start(msg, msg.user);
@@ -26,25 +36,25 @@ const dispatch = (msg) => {
   }
 };
 
-let client = null;
+let client: Client = null;
 
-const start = (msg, user) => {
+const start = (msg: IpcMessage, user: IUserModel) => {
   client = new Client(user);
   client.start();
   process.send({method: msg.method, result: 'OK'});
 };
 
-const getDomains = (msg) => {
+const getDomains = (msg: IpcMessage) => {
   const result = client.getDomains();
   process.send({method: msg.method, result});
 };
 
-const getTalks = (msg, domainId) => {
+const getTalks = (msg: IpcMessage, domainId: string) => {
   const result = client.getTalks(domainId);
   process.send({method: msg.method, result});
 };
 
-const sendTextMessage = (msg, domainId, talkId, content) => {
+const sendTextMessage = (msg: IpcMessage, domainId: string, talkId: string, content: any) => {
   client.sendTextMessage(domainId, talkId, content.text || content)
     .then(() => process.send({method: msg.method, result: 'OK'}))
     .catch(e => process.send({method: msg.method, error: e}));
@@ -52,11 +62,18 @@ const sendTextMessage = (msg, domainId, talkId, content) => {
 
 // ----
 
-const idAsc   = (a, b) => ((a.high - b.high) || (a.low - b.low));
-const byIdAsc = (a, b) => idAsc(a.id, b.id)
+interface HaxeInt64 {
+  high: number;
+  low: number;
+}
+const idAsc   = (a: HaxeInt64, b: HaxeInt64) => ((a.high - b.high) || (a.low - b.low));
+const byIdAsc = (a: { id: HaxeInt64 }, b: { id: HaxeInt64 }) => idAsc(a.id, b.id)
 
 class Client {
-  constructor(user) {
+  user: IUserModel;
+  client: any; // TODO
+
+  constructor(user: IUserModel) {
     this.user = user;
     this.client = Client._create(user);
 
@@ -66,7 +83,7 @@ class Client {
     this._handleTextMessage = this._handleTextMessage.bind(this);
   }
 
-  static _create(user) {
+  static _create(user: IUserModel) {
     const storagePath = `/data/storage.local/${user._id}`;
     fs.existsSync(storagePath) || fs.mkdirSync(storagePath, 0o755);
 
@@ -85,7 +102,7 @@ class Client {
     this.client.listen();
   }
 
-  _handleTextMessage(talk, author, msg) {
+  _handleTextMessage(talk: any, author: any, msg: any) { // TODO
     const userId = this.user._id;
 
     const domainId = talk.rooms[talk.room].domainId;
@@ -101,35 +118,35 @@ class Client {
       .catch(console.error); // FIXME: save as event history
   }
 
-  _int64ToDecimalStr(i) { // :: self => Int64 -> String
+  _int64ToDecimalStr(i: HaxeInt64): string {
     return this.client.stringifyInt64(i); // signed decimal string representation of i
   }
 
-  _decimalStrToHLStr(s) { // :: self => String -> String
+  _decimalStrToHLStr(s: string): string {
     const i = this.client.parseInt64(s); // input decimal string
     return `_${i.high}_${i.low}`;
   }
 
   // FIXME: doesn't work
-  _hlStrToDecimalStr(s) { // :: self => String -> String
+  _hlStrToDecimalStr(s: string): string {
     const res = /^_(-?\d*)_(-?\d*)$/.exec(s);
     return this._int64ToDecimalStr({high: Number(res[1]), low: Number(res[2])});
   }
 
-  _getDomains() {
+  _getDomains() { // TODO
     return this.client.data.getDomains();
   }
 
-  _getTalks() {
+  _getTalks() { // TODO
     return this.client.data.getTalks();
   }
 
-  _existsTalkInDomain(talkId, domainId) {
-    const ts  = this._getTalks();
+  _existsTalkInDomain(talkId: string, domainId: string) {
+    const ts: any  = this._getTalks();
     const str = this._int64ToDecimalStr;
     const res = ts
-      .filter((t) => str(t.domainId) === domainId)
-      .filter((t) => str(t.id) === talkId);
+      .filter((t: any) => str(t.domainId) === domainId)
+      .filter((t: any) => str(t.id) === talkId);
     return res.length > 0;
   }
 
@@ -138,26 +155,26 @@ class Client {
     const str = this._int64ToDecimalStr;
     const res = ds
       .sort(byIdAsc)
-      .map(d => ({id: str(d.id), name: d.domainInfo.name}));
+      .map((d: any) => ({id: str(d.id), name: d.domainInfo.name}));
     return res;
   }
 
-  getTalks(domainId) {
+  getTalks(domainId: string) {
     const ts  = this._getTalks();
     const str = this._int64ToDecimalStr;
     const res = ts
-      .filter((t) => str(t.domainId) === domainId)
+      .filter((t: any) => str(t.domainId) === domainId)
       .sort(byIdAsc)
-      .map(t => ({
+      .map((t: any) => ({
         id: str(t.id),
         name: t.name,
         type: t.type[0],
-        userIds: (t.userIds || []).map(i => str(i))
+        userIds: (t.userIds || []).map((i: any) => str(i))
       }));
     return res;
   }
 
-  sendTextMessage(domainId, talkId, text) { // :: self => String -> String -> String -> Promise ()
+  sendTextMessage(domainId: string, talkId: string, text: string): Promise<string> {
     if (this._existsTalkInDomain(talkId, domainId)) {
       const room = this._decimalStrToHLStr(talkId);
       this.client.send({room}, text);

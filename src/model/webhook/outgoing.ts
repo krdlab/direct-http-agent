@@ -1,14 +1,26 @@
-const fetch = require('node-fetch');
+import 'node-fetch';
+import { IWebhook, IWebhookConfig } from '../interfaces';
 
-class Outgoing {
-  constructor(webhook) {
+interface FetchOptions {
+  method: string;
+  headers: {
+    'Content-Type': string,
+    Authorization?: string
+  };
+  body?: string;
+}
+
+export class Outgoing {
+  config: IWebhookConfig;
+
+  constructor(webhook: IWebhook) {
     this.config = webhook.config;
   }
 
   _options() {
     const method = (this.config.method || 'GET').toUpperCase();
     const contentType = (this.config.contentType || 'application/x-www-form-urlencoded');
-    const options = {
+    let options: FetchOptions = {
       method,
       headers: {
         'Content-Type': contentType
@@ -23,11 +35,9 @@ class Outgoing {
     return options;
   }
 
-  async execute() { // :: self => Promise Any
+  async execute() {
     const res  = await fetch(this.config.url, this._options());
     const json = await res.json();
     return json;
   }
 }
-
-module.exports = Outgoing;

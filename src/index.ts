@@ -1,16 +1,18 @@
-require('dotenv').load({path: '/etc/agent/.env'});
+import * as dotenv from 'dotenv';
+import * as express from 'express';
+import * as helmet from 'helmet';
+import * as bodyParser from 'body-parser';
+import * as session from 'express-session';
+import * as passport from 'passport';
+import * as crypto from 'crypto';
 
-const express     = require('express');
-const helmet      = require('helmet');
-const bodyParser  = require('body-parser');
-const session     = require('express-session');
-const passport    = require('passport');
-const crypto      = require('crypto');
-const model       = require('./model');
-const auth        = require('./auth');
-const webhooks    = require('./webhooks');
-const dapi        = require('./direct-api');
-const control     = require('./control');
+dotenv.config({path: '/etc/agent/.env'});
+
+import * as model from './model';
+import * as auth from './auth';
+import webhooks from './webhooks';
+import dapi from './direct-api';
+import control from './control';
 
 // passport
 const DirectPassportStrategy = require('passport-direct-openidconnect').Strategy;
@@ -30,7 +32,7 @@ const app = express();
 const sessionOptions = {
   name: 'sessionid',
   secret: crypto.randomBytes(32).toString('hex'),
-  cookie: {}
+  cookie: { secure: false }
 };
 if (app.get('env') == 'production') {
   app.set('trust proxy', 1);

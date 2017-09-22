@@ -1,10 +1,12 @@
 // file: src/control.js
-const router = require('express').Router();
-const model  = require('./model');
+import { Router } from 'express';
+import * as model from './model';
+
+const router = Router();
 
 router.post('/restart', async (req, res) => {
   await model.restartClient(req.user);
   res.sendStatus(200);
 });
 
-module.exports = router;
+export default router;
