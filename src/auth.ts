@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as models from './models';
 
 export function checkSession(req: Request, res: Response, next: NextFunction) {
-  if (req.session.user) {
+  if (req.session && req.session.user) {
     next();
   } else {
     res.redirect('/login');

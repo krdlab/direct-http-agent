@@ -1,4 +1,4 @@
-import { IUserModel, User, IWebhookModel, Webhook } from './entities';
+import { IUser, IUserModel, User, IWebhookModel, Webhook } from './entities';
 import * as webhook from './webhook';
 import { DirectClientManager as Supervisor } from './direct/supervisor';
 import { DirectClientProxy } from './direct/client-proxy';
@@ -37,10 +37,10 @@ const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToke
   } else {
     // NOTE: 新規ユーザーであれば情報を作成
     return new User({
-      _id: id,
       name: profile.display_name,
       apiToken: genToken(32),
       oidcAccessToken: oidcAccessToken,
+      directUserId: id,
       directApiToken: directApiToken
     });
   }
@@ -49,7 +49,7 @@ const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToke
 const genToken = (size: number) => crypto.randomBytes(size / 2).toString('hex');
 
 const findOrCreateUserById = async (id: string, profile: any, oidcAccessToken: string, directApiToken: string) => {
-  const res  = await User.findById(id).exec();
+  const res  = await User.findOne({ directUserId: id }).exec();
   return await _user(res, id, profile, oidcAccessToken, directApiToken).save();
 };
 
@@ -57,17 +57,17 @@ export async function findUserByApiToken(apiToken: string) {
   return await User.where('apiToken', apiToken).findOne().exec();
 };
 
-export function findClientByUser(user: IUserModel) {
-  return supervisor.findByUserId(user._id);
+export function findClientByUser(user: IUser) {
+  return supervisor.findByUserId(user.directUserId);
 };
 
-export async function restartClient(user: IUserModel) {
+export async function restartClient(user: IUser) {
   return supervisor.restart(user);
 };
 
-export async function deleteUser(user: IUserModel) {
+export async function deleteUser(user: IUser) {
   await supervisor.removeClient(user);
-  await User.remove({_id: user._id}).exec();
+  await User.remove({directUserId: user.directUserId}).exec();
 };
 
 export { DirectClientProxy };

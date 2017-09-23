@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 import * as webhook from '../webhook';
-import { IUserModel } from '../entities';
+import { IUser } from '../entities';
 import * as data from './data';
 
 const DirectAPI = require("direct-js").DirectAPI;
 
-const createDirectAPI = (user: IUserModel) => {
-  const storagePath = `/data/storage.local/${user._id}`;
+const createDirectAPI = (user: IUser) => {
+  const storagePath = `/data/storage.local/${user.directUserId}`;
   fs.existsSync(storagePath) || fs.mkdirSync(storagePath, 0o755);
 
   const d = DirectAPI.getInstance();
@@ -25,10 +25,10 @@ const idAsc   = (a: HaxeInt64, b: HaxeInt64) => ((a.high - b.high) || (a.low - b
 const byIdAsc = (a: { id: HaxeInt64 }, b: { id: HaxeInt64 }) => idAsc(a.id, b.id)
 
 export class Client {
-  private user: IUserModel;
+  private user: IUser;
   private directjs: any;
 
-  constructor(user: IUserModel) {
+  constructor(user: IUser) {
     this.user = user;
     this.directjs = createDirectAPI(user);
 
@@ -43,7 +43,7 @@ export class Client {
   }
 
   _handleTextMessage(talk: any, author: any, msg: any) { // TODO
-    const userId = this.user._id;
+    const user = this.user;
 
     const domainId = talk.rooms[talk.room].domainId;
     const talkId   = talk.room;
@@ -51,7 +51,7 @@ export class Client {
     const text     = msg.content;
     const event    = new webhook.DirectEvent(domainId, talkId, authorId, text, this._decimalStrToHLStr);
 
-    webhook.findByEvent(userId, event)
+    webhook.findByEvent(user, event)
       .then(hooks => hooks.map(hook => hook.execute()))
       .then(ps => Promise.all(ps))
       .then(res => console.log(`${res.length} webhook(s) executed`)) // FIXME

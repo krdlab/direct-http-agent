@@ -51,13 +51,13 @@ app.get('/', (req, res) => {
 });
 app.get('/login',    passport.authenticate('direct'));
 app.get('/login/cb', passport.authenticate('direct', { failureRedirect: '/login', session: false }), (req, res) => {
-  req.session.user = req.user;
+  req.session!.user = req.user;
   res.redirect('/home');
 });
 app.get('/home', auth.checkSession, (req, res) => {
   const data = {
     serviceBaseUrl: SERVICE_BASE_URL,
-    user: req.session.user
+    user: req.session!.user
   };
   res.render('home', data);
 });

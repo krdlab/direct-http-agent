@@ -5,6 +5,7 @@ export interface IUser {
   name: string;
   apiToken: string;
   oidcAccessToken: string;
+  directUserId: string;
   directApiToken: string;
   webhooks: Array<IWebhook>;
   createdAt: Date;
@@ -16,10 +17,10 @@ export interface IUserModel extends IUser, Document {
 }
 
 const UserSchema = new Schema({
-  _id: { type: String, required: true },
   name: { type: String, required: true },
   apiToken: { type: String, required: true, index: true },
   oidcAccessToken: { type: String, required: true },
+  directUserId: { type: String, required: true, unique: true },
   directApiToken: { type: String, required: true, index: true },
   webhooks: { type: [WebhookSchema], default: [] },
   createdAt: { type: Date, default: Date.now },

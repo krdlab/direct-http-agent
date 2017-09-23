@@ -1,14 +1,14 @@
 import { Worker } from 'cluster';
 import { EventEmitter } from 'events';
-import { IUserModel } from '../entities';
+import { IUser } from '../entities';
 import { Domain, Talk } from './data';
 
 export class DirectClientProxy {
-  private user: IUserModel;
+  private user: IUser;
   private worker: Worker;
   private response: EventEmitter;
 
-  constructor(user: IUserModel, worker: Worker) {
+  constructor(user: IUser, worker: Worker) {
     this.user = user;
     this.worker = worker;
     this.response = new EventEmitter();
@@ -22,7 +22,7 @@ export class DirectClientProxy {
   }
 
   get userId(): string {
-    return this.user._id;
+    return this.user.directUserId;
   }
 
   start(): Promise<string> {

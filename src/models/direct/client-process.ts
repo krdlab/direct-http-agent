@@ -6,6 +6,8 @@ process.on('message', (msg) => {
   dispatch(msg);
 });
 
+const send = process.send!;
+
 interface IpcMessage { // FIXME
   method: string;
   user?: any;
@@ -23,39 +25,39 @@ const dispatch = (msg: IpcMessage) => {
     getDomains(msg);
     break;
   case 'getTalks':
-    getTalks(msg, msg.domainId);
+    getTalks(msg, msg.domainId!);
     break;
   case 'sendTextMessage':
-    sendTextMessage(msg, msg.domainId, msg.talkId, msg.content);
+    sendTextMessage(msg, msg.domainId!, msg.talkId!, msg.content);
     break;
   default:
     console.error(`not implemented: ${JSON.stringify(msg)}`);
   }
 };
 
-let client: Client = null;
+let client: Client | null = null;
 
 const start = (msg: IpcMessage, user: IUserModel) => {
   client = new Client(user);
   client.start();
-  process.send({method: msg.method, result: 'OK'});
+  send({method: msg.method, result: 'OK'});
 };
 
 const getDomains = (msg: IpcMessage) => {
-  const result = client.getDomains();
-  process.send({method: msg.method, result});
+  const result = client!.getDomains();
+  send({method: msg.method, result});
 };
 
 const getTalks = (msg: IpcMessage, domainId: string) => {
-  const result = client.getTalks(domainId);
-  process.send({method: msg.method, result});
+  const result = client!.getTalks(domainId);
+  send({method: msg.method, result});
 };
 
 const sendTextMessage = (msg: IpcMessage, domainId: string, talkId: string, content: string) => {
-  const res = client.sendTextMessage(domainId, talkId, content);
+  const res = client!.sendTextMessage(domainId, talkId, content);
   if (res === 'Accepted') {
-    process.send({method: msg.method, result: res});
+    send({method: msg.method, result: res});
   } else {
-    process.send({method: msg.method, error:  res});
+    send({method: msg.method, error:  res});
   }
 };

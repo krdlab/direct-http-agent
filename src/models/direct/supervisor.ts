@@ -1,6 +1,6 @@
 import * as cluster from 'cluster';
 import { EventEmitter } from 'events';
-import { IUserModel } from '../entities';
+import { IUser } from '../entities';
 import * as data from './data';
 import { DirectClientProxy } from './client-proxy';
 
@@ -27,7 +27,7 @@ export class DirectClientManager {
     return Promise.resolve('');
   }
 
-  private _closeIfNeeded(client?: DirectClientProxy): Promise<string> {
+  private _closeIfNeeded(client: DirectClientProxy | null): Promise<string> {
     if (client == null) {
       return this._success();
     } else {
@@ -36,8 +36,8 @@ export class DirectClientManager {
     }
   }
 
-  startAs(user: IUserModel): Promise<string> {
-    const c = this.findByUserId(user._id);
+  startAs(user: IUser): Promise<string> {
+    const c = this.findByUserId(user.directUserId);
     if (c == null) {
       const newWorker = cluster.fork();
       const newClient = new DirectClientProxy(user, newWorker);
@@ -49,17 +49,18 @@ export class DirectClientManager {
     }
   }
 
-  restart(user: IUserModel): Promise<any> {
-    const c = this.findByUserId(user._id);
+  restart(user: IUser): Promise<any> {
+    const c = this.findByUserId(user.directUserId);
     return this._closeIfNeeded(c).then(() => this.startAs(user));
   }
 
-  findByUserId(userId: string): DirectClientProxy {
-    return this.clients.get(userId);
+  findByUserId(userId: string): DirectClientProxy | null {
+    const c = this.clients.get(userId);
+    return c ? c : null;
   }
 
-  removeClient(user: IUserModel): Promise<string> {
-    const c = this.findByUserId(user._id);
+  removeClient(user: IUser): Promise<string> {
+    const c = this.findByUserId(user.directUserId);
     return this._closeIfNeeded(c);
   }
 }
