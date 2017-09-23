@@ -26,7 +26,11 @@ export function checkApiToken(req: Request, res: Response, next: NextFunction) {
     });
 };
 
-export function findClient(req: Request, res: Response, next: NextFunction) {
+export interface CheckedRequest extends Request {
+  client: models.DirectClientProxy;
+}
+
+export function findClient(req: CheckedRequest, res: Response, next: NextFunction) {
   const client = models.findClientByUser(req.user);
   if (client) {
     req.client = client;

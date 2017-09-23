@@ -1,6 +1,7 @@
 import { IUserModel, User, IWebhookModel, Webhook } from './entities';
 import * as webhook from './webhook';
-import { DirectClientManager as Supervisor } from './supervisor';
+import { DirectClientManager as Supervisor } from './direct/supervisor';
+import { DirectClientProxy } from './direct/client-proxy';
 import * as crypto from 'crypto';
 import 'node-fetch';
 
@@ -69,6 +70,7 @@ export async function deleteUser(user: IUserModel) {
   await User.remove({_id: user._id}).exec();
 };
 
+export { DirectClientProxy };
 export const addWebhook = webhook.add;
 export const getWebhooks = webhook.getAll;
 export const deleteWebhook = webhook.remove;
