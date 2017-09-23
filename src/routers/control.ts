@@ -1,11 +1,11 @@
 // file: src/control.js
 import { Router } from 'express';
-import * as model from './model';
+import * as models from '../models';
 
 const router = Router();
 
 router.post('/restart', async (req, res) => {
-  await model.restartClient(req.user);
+  await models.restartClient(req.user);
   res.sendStatus(200);
 });
 

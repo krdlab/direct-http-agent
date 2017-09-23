@@ -1,4 +1,4 @@
-import { IUserModel, User, IWebhookModel, Webhook } from './db';
+import { IUserModel, User, IWebhookModel, Webhook } from './entities';
 import * as webhook from './webhook';
 import { DirectClientManager as Supervisor } from './supervisor';
 import * as crypto from 'crypto';

@@ -8,11 +8,9 @@ import * as crypto from 'crypto';
 
 dotenv.config({path: '/etc/agent/.env'});
 
-import * as model from './model';
+import * as models from './models';
 import * as auth from './auth';
-import webhooks from './webhooks';
-import dapi from './direct-api';
-import control from './control';
+import * as routers from './routers';
 
 // passport
 const DirectPassportStrategy = require('passport-direct-openidconnect').Strategy;
@@ -23,7 +21,7 @@ const directPassportOptions = {
   scope:        ['email', 'direct.users.me.readonly', 'direct.api_access_tokens'],
   session:      false
 };
-passport.use(new DirectPassportStrategy(directPassportOptions, model.passportAuthorized));
+passport.use(new DirectPassportStrategy(directPassportOptions, models.passportAuthorized));
 
 // express
 const SERVICE_BASE_URL = process.env.NODE_SERVICE_BASE_URL;
@@ -44,9 +42,9 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(session(sessionOptions));
 app.use(passport.initialize());
-app.use('/webhooks', auth.checkApiToken, webhooks);
-app.use('/dapi', auth.checkApiToken, dapi);
-app.use('/control', auth.checkApiToken, control);
+app.use('/webhooks', auth.checkApiToken, routers.webhooks);
+app.use('/dapi', auth.checkApiToken, routers.directapi);
+app.use('/control', auth.checkApiToken, routers.control);
 
 app.get('/', (req, res) => {
   res.render('index', {});
@@ -65,7 +63,7 @@ app.get('/home', auth.checkSession, (req, res) => {
 });
 app.post('/logout', async (req, res) => {
   if (req.session && req.session.user) {
-    await model.deleteUser(req.session.user);
+    await models.deleteUser(req.session.user);
     delete req.session.user;
   }
   delete req.user;

@@ -1,6 +1,6 @@
 // file: src/auth.js
 import { Request, Response, NextFunction } from 'express';
-import * as model from './model';
+import * as models from './models';
 
 export function checkSession(req: Request, res: Response, next: NextFunction) {
   if (req.session.user) {
@@ -13,7 +13,7 @@ export function checkSession(req: Request, res: Response, next: NextFunction) {
 export function checkApiToken(req: Request, res: Response, next: NextFunction) {
   const auth = req.header('Authorization');
   const apiToken = (auth || '').split(' ')[1];
-  model.findUserByApiToken(apiToken)
+  models.findUserByApiToken(apiToken)
     .then(user => {
       if (!user) { throw 'not found'; }
       req.user = user;
@@ -27,7 +27,7 @@ export function checkApiToken(req: Request, res: Response, next: NextFunction) {
 };
 
 export function findClient(req: Request, res: Response, next: NextFunction) {
-  const client = model.findClientByUser(req.user);
+  const client = models.findClientByUser(req.user);
   if (client) {
     req.client = client;
     next();

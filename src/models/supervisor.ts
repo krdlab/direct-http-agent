@@ -1,6 +1,6 @@
 import * as cluster from 'cluster';
 import { EventEmitter } from 'events';
-import { IUserModel } from './db';
+import { IUserModel } from './entities';
 
 cluster.setupMaster({
   exec: './src/model/direct.js'

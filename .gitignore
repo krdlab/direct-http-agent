@@ -4,3 +4,4 @@ node_modules/
 data/
 etc/
 dist/
+.DS_Store

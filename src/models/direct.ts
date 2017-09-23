@@ -1,7 +1,8 @@
 // file: src/model/direct.js
 import * as fs from 'fs';
+import './datasource';
 import * as webhook from './webhook';
-import { IUserModel } from './db';
+import { IUserModel } from './entities';
 
 const DirectAPI = require("direct-js").DirectAPI;
 

@@ -1,5 +1,4 @@
-import { User, IUserModel, Webhook, WebhookConfig, WebhookEvent } from '../db';
-import { IWebhook } from '../interfaces';
+import { User, IUserModel, Webhook, IWebhook, WebhookConfig, WebhookEvent } from '../entities';
 import { DirectEvent } from './direct-event';
 import { Outgoing } from './outgoing';
 
