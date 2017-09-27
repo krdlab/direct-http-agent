@@ -8,6 +8,7 @@ import * as crypto from 'crypto';
 
 dotenv.config({path: '/etc/agent/.env'});
 
+import './models/datasource';
 import * as models from './models';
 import * as auth from './auth';
 import * as routers from './routers';

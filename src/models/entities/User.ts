@@ -17,14 +17,14 @@ export interface IUserModel extends IUser, Document {
 }
 
 const UserSchema = new Schema({
-  name: { type: String, required: true },
-  apiToken: { type: String, required: true, index: true },
-  oidcAccessToken: { type: String, required: true },
-  directUserId: { type: String, required: true, unique: true },
-  directApiToken: { type: String, required: true, index: true },
-  webhooks: { type: [WebhookSchema], default: [] },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  name:             { type: String, required: true },
+  apiToken:         { type: String, required: true, index: true },
+  oidcAccessToken:  { type: String, required: true },
+  directUserId:     { type: String, required: true, unique: true },
+  directApiToken:   { type: String, required: true, index: true },
+  webhooks:         { type: [WebhookSchema], default: [] },
+  createdAt:        { type: Date,            default: Date.now },
+  updatedAt:        { type: Date,            default: Date.now }
 });
 
 export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema);

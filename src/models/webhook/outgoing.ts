@@ -1,4 +1,4 @@
-import 'node-fetch';
+import fetch from 'node-fetch';
 import { IWebhook, IWebhookConfig } from '../entities';
 
 export class Outgoing {

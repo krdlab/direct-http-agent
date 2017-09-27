@@ -1,34 +1,25 @@
 import '../datasource';
-import { IUserModel } from '../entities';
+import { IUser } from '../entities';
 import { Client } from './client';
+import * as t from './types';
 
 process.on('message', (msg) => {
   dispatch(msg);
 });
 
-const send = process.send!;
-
-interface IpcMessage { // FIXME
-  method: string;
-  user?: any;
-  domainId?: string;
-  talkId?: string;
-  content?: any;
-}
-
-const dispatch = (msg: IpcMessage) => {
+const dispatch = (msg: t.IpcMessage) => {
   switch (msg.method) {
   case 'start':
-    start(msg, msg.user);
+    start(msg);
     break;
   case 'getDomains':
     getDomains(msg);
     break;
   case 'getTalks':
-    getTalks(msg, msg.domainId!);
+    getTalks(msg);
     break;
   case 'sendTextMessage':
-    sendTextMessage(msg, msg.domainId!, msg.talkId!, msg.content);
+    sendTextMessage(msg);
     break;
   default:
     console.error(`not implemented: ${JSON.stringify(msg)}`);
@@ -37,27 +28,27 @@ const dispatch = (msg: IpcMessage) => {
 
 let client: Client | null = null;
 
-const start = (msg: IpcMessage, user: IUserModel) => {
-  client = new Client(user);
+const start = (msg: t.IStart) => {
+  client = new Client(msg.user);
   client.start();
-  send({method: msg.method, result: 'OK'});
+  process.send!({method: msg.method, result: 'OK'});
 };
 
-const getDomains = (msg: IpcMessage) => {
+const getDomains = (msg: t.IGetDomains) => {
   const result = client!.getDomains();
-  send({method: msg.method, result});
+  process.send!({method: msg.method, result});
 };
 
-const getTalks = (msg: IpcMessage, domainId: string) => {
-  const result = client!.getTalks(domainId);
-  send({method: msg.method, result});
+const getTalks = (msg: t.IGetTalks) => {
+  const result = client!.getTalks(msg.domainId);
+  process.send!({method: msg.method, result});
 };
 
-const sendTextMessage = (msg: IpcMessage, domainId: string, talkId: string, content: string) => {
-  const res = client!.sendTextMessage(domainId, talkId, content);
+const sendTextMessage = (msg: t.ISendTextMessage) => {
+  const res = client!.sendTextMessage(msg.domainId, msg.talkId, msg.content);
   if (res === 'Accepted') {
-    send({method: msg.method, result: res});
+    process.send!({method: msg.method, result: res});
   } else {
-    send({method: msg.method, error:  res});
+    process.send!({method: msg.method, error:  res});
   }
 };

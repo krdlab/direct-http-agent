@@ -4,7 +4,7 @@ export class Domain {
   name: string;
   constructor(id: string, name: string) {
     this.id = id;
-    this.name = id;
+    this.name = name;
   }
 };
 

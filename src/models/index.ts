@@ -3,7 +3,7 @@ import * as webhook from './webhook';
 import { DirectClientManager as Supervisor } from './direct/supervisor';
 import { DirectClientProxy } from './direct/client-proxy';
 import * as crypto from 'crypto';
-import 'node-fetch';
+import fetch from 'node-fetch';
 
 const DIRECT_REST_API_ENDPOINT = 'https://api.direct4b.com/albero-app-server';
 const supervisor = new Supervisor();
@@ -26,10 +26,10 @@ const fetchDirectAccessToken = async (oidcAccessToken: string) => {
 };
 
 const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToken: string, directApiToken: string) => {
-  console.log(profile);
+  // console.log(profile);
   if (user) {
     // NOTE: 既存ユーザーであれば情報を更新
-    user.name = profile.display_name;
+    user.name = profile.displayName;
     user.oidcAccessToken = oidcAccessToken;
     user.directApiToken = directApiToken;
     user.updatedAt = new Date();
@@ -37,7 +37,7 @@ const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToke
   } else {
     // NOTE: 新規ユーザーであれば情報を作成
     return new User({
-      name: profile.display_name,
+      name: profile.displayName,
       apiToken: genToken(32),
       oidcAccessToken: oidcAccessToken,
       directUserId: id,
@@ -48,7 +48,7 @@ const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToke
 
 const genToken = (size: number) => crypto.randomBytes(size / 2).toString('hex');
 
-const findOrCreateUserById = async (id: string, profile: any, oidcAccessToken: string, directApiToken: string) => {
+const findOrCreateUserById = async (id: string, profile: any, oidcAccessToken: string, directApiToken: string): Promise<IUser> => {
   const res  = await User.findOne({ directUserId: id }).exec();
   return await _user(res, id, profile, oidcAccessToken, directApiToken).save();
 };

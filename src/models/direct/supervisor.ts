@@ -5,7 +5,7 @@ import * as data from './data';
 import { DirectClientProxy } from './client-proxy';
 
 cluster.setupMaster({
-  exec: `${__dirname}/client-process.ts`
+  exec: `${__dirname}/client-process.js`
 });
 
 export class DirectClientManager {

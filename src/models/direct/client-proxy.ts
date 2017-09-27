@@ -2,6 +2,7 @@ import { Worker } from 'cluster';
 import { EventEmitter } from 'events';
 import { IUser } from '../entities';
 import { Domain, Talk } from './data';
+import * as t from './types';
 
 export class DirectClientProxy {
   private user: IUser;
@@ -26,11 +27,13 @@ export class DirectClientProxy {
   }
 
   start(): Promise<string> {
-    const method = 'start';
-    const user = this.user;
+    const start: t.IStart = {
+      method: "start",
+      user: this.user
+    }
     return new Promise((resolve, reject) => {
-      this.worker.send({method, user});
-      this.response.once('start', (msg) => {
+      this.worker.send(start);
+      this.response.once(start.method, (msg) => {
         resolve(msg.result);
       });
     });
@@ -48,28 +51,38 @@ export class DirectClientProxy {
   }
 
   getDomains(): Promise<Domain[]> {
+    const getDomains: t.IGetDomains = {
+      method: "getDomains"
+    };
     return new Promise((resolve, reject) => {
-      this.worker.send({method: 'getDomains'});
-      this.response.once('getDomains', (msg) => {
+      this.worker.send(getDomains);
+      this.response.once(getDomains.method, (msg) => {
         resolve(msg.result);
       });
     });
   }
 
   getTalks(domainId: string): Promise<Talk[]> {
+    const getTalks: t.IGetTalks = {
+      method: "getTalks",
+      domainId
+    };
     return new Promise((resolve, reject) => {
-      this.worker.send({method: 'getTalks', domainId});
-      this.response.once('getTalks', (msg) => {
+      this.worker.send(getTalks);
+      this.response.once(getTalks.method, (msg) => {
         resolve(msg.result);
       });
     });
   }
 
   sendTextMessage(domainId: string, talkId: string, content: string): Promise<string> {
-    const method = 'sendTextMessage';
+    const sendTextMessage: t.ISendTextMessage = {
+      method: "sendTextMessage",
+      domainId, talkId, content
+    };
     return new Promise((resolve, reject) => {
-      this.worker.send({method, domainId, talkId, content});
-      this.response.once(method, (msg) => {
+      this.worker.send(sendTextMessage);
+      this.response.once(sendTextMessage.method, (msg) => {
         if (msg.error) {
           reject(msg.error);
         } else {
