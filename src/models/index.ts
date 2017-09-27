@@ -1,11 +1,11 @@
-import { IUser, IUserModel, User, IWebhookModel, Webhook } from './entities';
-import * as webhook from './webhook';
-import { DirectClientManager as Supervisor } from './direct/supervisor';
-import { DirectClientProxy } from './direct/client-proxy';
-import * as crypto from 'crypto';
-import fetch from 'node-fetch';
+import { IUser, IUserModel, User, IWebhookModel, Webhook } from "./entities";
+import * as webhook from "./webhook";
+import { DirectClientManager as Supervisor } from "./direct/supervisor";
+import { DirectClientProxy } from "./direct/client-proxy";
+import * as crypto from "crypto";
+import fetch from "node-fetch";
 
-const DIRECT_REST_API_ENDPOINT = 'https://api.direct4b.com/albero-app-server';
+const DIRECT_REST_API_ENDPOINT = "https://api.direct4b.com/albero-app-server";
 const supervisor = new Supervisor();
 
 export async function passportAuthorized(iss: string, sub: string, profile: any, oidcAccessToken: string, refreshToken?: string, next?: any) {
@@ -17,10 +17,10 @@ export async function passportAuthorized(iss: string, sub: string, profile: any,
   } catch (err) {
     next(err);
   }
-};
+}
 
 const fetchDirectAccessToken = async (oidcAccessToken: string) => {
-  const res  = await fetch(`${DIRECT_REST_API_ENDPOINT}/api_access_tokens`, {method: 'POST', headers: {'Authorization': `Bearer ${oidcAccessToken}`}});
+  const res  = await fetch(`${DIRECT_REST_API_ENDPOINT}/api_access_tokens`, {method: "POST", headers: {"Authorization": `Bearer ${oidcAccessToken}`}});
   const json = await res.json();
   return json.access_token;
 };
@@ -46,7 +46,7 @@ const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToke
   }
 };
 
-const genToken = (size: number) => crypto.randomBytes(size / 2).toString('hex');
+const genToken = (size: number) => crypto.randomBytes(size / 2).toString("hex");
 
 const findOrCreateUserById = async (id: string, profile: any, oidcAccessToken: string, directApiToken: string): Promise<IUser> => {
   const res  = await User.findOne({ directUserId: id }).exec();
@@ -54,21 +54,21 @@ const findOrCreateUserById = async (id: string, profile: any, oidcAccessToken: s
 };
 
 export async function findUserByApiToken(apiToken: string) {
-  return await User.where('apiToken', apiToken).findOne().exec();
-};
+  return await User.where("apiToken", apiToken).findOne().exec();
+}
 
 export function findClientByUser(user: IUser) {
   return supervisor.findByUserId(user.directUserId);
-};
+}
 
 export async function restartClient(user: IUser) {
   return supervisor.restart(user);
-};
+}
 
 export async function deleteUser(user: IUser) {
   await supervisor.removeClient(user);
   await User.remove({directUserId: user.directUserId}).exec();
-};
+}
 
 export { DirectClientProxy };
 export const addWebhook = webhook.add;

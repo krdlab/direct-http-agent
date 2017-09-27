@@ -1,4 +1,4 @@
-import { IUser } from '../entities';
+import { IUser } from "../entities";
 
 export interface IStart {
   method: "start";

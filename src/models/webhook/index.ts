@@ -1,6 +1,6 @@
-import { User, IUser, IUserModel, Webhook, IWebhook, WebhookConfig, WebhookEvent } from '../entities';
-import { DirectEvent } from './direct-event';
-import { Outgoing } from './outgoing';
+import { User, IUser, IUserModel, Webhook, IWebhook, WebhookConfig, WebhookEvent } from "../entities";
+import { DirectEvent } from "./direct-event";
+import { Outgoing } from "./outgoing";
 
 
 export async function add(user: IUserModel, input: IWebhook) {

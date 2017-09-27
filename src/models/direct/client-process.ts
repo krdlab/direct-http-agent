@@ -1,24 +1,24 @@
-import '../datasource';
-import { IUser } from '../entities';
-import { Client } from './client';
-import * as t from './types';
+import "../datasource";
+import { IUser } from "../entities";
+import { Client } from "./client";
+import * as t from "./types";
 
-process.on('message', (msg) => {
+process.on("message", (msg) => {
   dispatch(msg);
 });
 
 const dispatch = (msg: t.IpcMessage) => {
   switch (msg.method) {
-  case 'start':
+  case "start":
     start(msg);
     break;
-  case 'getDomains':
+  case "getDomains":
     getDomains(msg);
     break;
-  case 'getTalks':
+  case "getTalks":
     getTalks(msg);
     break;
-  case 'sendTextMessage':
+  case "sendTextMessage":
     sendTextMessage(msg);
     break;
   default:
@@ -31,7 +31,7 @@ let client: Client | null = null;
 const start = (msg: t.IStart) => {
   client = new Client(msg.user);
   client.start();
-  process.send!({method: msg.method, result: 'OK'});
+  process.send!({method: msg.method, result: "OK"});
 };
 
 const getDomains = (msg: t.IGetDomains) => {
@@ -46,7 +46,7 @@ const getTalks = (msg: t.IGetTalks) => {
 
 const sendTextMessage = (msg: t.ISendTextMessage) => {
   const res = client!.sendTextMessage(msg.domainId, msg.talkId, msg.content);
-  if (res === 'Accepted') {
+  if (res === "Accepted") {
     process.send!({method: msg.method, result: res});
   } else {
     process.send!({method: msg.method, error:  res});

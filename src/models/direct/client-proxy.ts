@@ -1,8 +1,8 @@
-import { Worker } from 'cluster';
-import { EventEmitter } from 'events';
-import { IUser } from '../entities';
-import { Domain, Talk } from './data';
-import * as t from './types';
+import { Worker } from "cluster";
+import { EventEmitter } from "events";
+import { IUser } from "../entities";
+import { Domain, Talk } from "./data";
+import * as t from "./types";
 
 export class DirectClientProxy {
   private user: IUser;
@@ -15,7 +15,7 @@ export class DirectClientProxy {
     this.response = new EventEmitter();
     this._handleMessage = this._handleMessage.bind(this);
 
-    this.worker.on('message', this._handleMessage);
+    this.worker.on("message", this._handleMessage);
   }
 
   private _handleMessage(msg: any) {
@@ -30,7 +30,7 @@ export class DirectClientProxy {
     const start: t.IStart = {
       method: "start",
       user: this.user
-    }
+    };
     return new Promise((resolve, reject) => {
       this.worker.send(start);
       this.response.once(start.method, (msg) => {
@@ -43,9 +43,9 @@ export class DirectClientProxy {
     return new Promise((resolve, reject) => {
       const pid = this.worker.id;
       this.worker.kill();
-      this.worker.on('exit', (code, signal) => {
+      this.worker.on("exit", (code, signal) => {
         console.log(`worker killed: pid = ${pid}, code = ${code}, signal = ${signal}`);
-        resolve('closed');
+        resolve("closed");
       });
     });
   }

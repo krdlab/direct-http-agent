@@ -1,5 +1,5 @@
-import fetch from 'node-fetch';
-import { IWebhook, IWebhookConfig } from '../entities';
+import fetch from "node-fetch";
+import { IWebhook, IWebhookConfig } from "../entities";
 
 export class Outgoing {
   private config: IWebhookConfig;
@@ -26,20 +26,20 @@ export class Outgoing {
   }
 
   private get method() {
-    return (this.config.method || 'GET').toUpperCase();
+    return (this.config.method || "GET").toUpperCase();
   }
 
   private get headers() {
     const hs: {[index: string]: string} = {
-      'Content-Type': this.contentType
+      "Content-Type": this.contentType
     };
     if (this.config.authorization) {
-      hs['Authorization'] = this.config.authorization;
+      hs["Authorization"] = this.config.authorization;
     }
     return hs;
   }
 
   private get contentType() {
-    return (this.config.contentType || 'application/x-www-form-urlencoded');
+    return (this.config.contentType || "application/x-www-form-urlencoded");
   }
 }

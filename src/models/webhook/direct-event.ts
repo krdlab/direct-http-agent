@@ -1,4 +1,4 @@
-import { IWebhook } from '../entities';
+import { IWebhook } from "../entities";
 
 type DecimalStringToHLString = (s: string) => string;
 
@@ -17,7 +17,7 @@ export class DirectEvent {
     this.ds2hl = ds2hl;
   }
 
-  match(webhook: IWebhook): boolean { 
+  match(webhook: IWebhook): boolean {
     return this.domainId === this.ds2hl(webhook.event.domainId)
       && this.talkId === this.ds2hl(webhook.event.talkId)
       && this.content.includes(webhook.event.trigger);

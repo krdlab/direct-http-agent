@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as webhook from '../webhook';
-import { IUser } from '../entities';
-import * as data from './data';
+import * as fs from "fs";
+import * as webhook from "../webhook";
+import { IUser } from "../entities";
+import * as data from "./data";
 
 const DirectAPI = require("direct-js").DirectAPI;
 
@@ -11,18 +11,18 @@ const createDirectAPI = (user: IUser) => {
 
   const d = DirectAPI.getInstance();
   d.setOptions({
-    host: 'api.direct4b.com',
-    endpoint: 'wss://api.direct4b.com/albero-app-server/api',
+    host: "api.direct4b.com",
+    endpoint: "wss://api.direct4b.com/albero-app-server/api",
     access_token: user.directApiToken,
     storage_path: storagePath
   });
   return d;
 };
 
-type HaxeInt64 = { high: number, low: number }
+type HaxeInt64 = { high: number, low: number };
 
 const idAsc   = (a: HaxeInt64, b: HaxeInt64) => ((a.high - b.high) || (a.low - b.low));
-const byIdAsc = (a: { id: HaxeInt64 }, b: { id: HaxeInt64 }) => idAsc(a.id, b.id)
+const byIdAsc = (a: { id: HaxeInt64 }, b: { id: HaxeInt64 }) => idAsc(a.id, b.id);
 
 export class Client {
   private user: IUser;
@@ -38,7 +38,7 @@ export class Client {
   }
 
   start() {
-    this.directjs.on('TextMessage', this._handleTextMessage);
+    this.directjs.on("TextMessage", this._handleTextMessage);
     this.directjs.listen();
   }
 
@@ -120,9 +120,9 @@ export class Client {
     if (this._existsTalkInDomain(talkId, domainId)) {
       const room = this._decimalStrToHLStr(talkId);
       this.directjs.send({room}, text);
-      return 'Accepted';
+      return "Accepted";
     } else {
-      return 'NotFound';
+      return "NotFound";
     }
   }
 }

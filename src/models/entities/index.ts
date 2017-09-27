@@ -1,2 +1,2 @@
-export * from './Webhook';
-export * from './User';
+export * from "./Webhook";
+export * from "./User";

@@ -1,5 +1,5 @@
-import { Schema, Document, Model, model, connect, Types } from 'mongoose';
-import { IWebhook, IWebhookModel, WebhookSchema } from './Webhook';
+import { Schema, Document, Model, model, connect, Types } from "mongoose";
+import { IWebhook, IWebhookModel, WebhookSchema } from "./Webhook";
 
 export interface IUser {
   name: string;
@@ -27,4 +27,4 @@ const UserSchema = new Schema({
   updatedAt:        { type: Date,            default: Date.now }
 });
 
-export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema);
+export const User: Model<IUserModel> = model<IUserModel>("User", UserSchema);

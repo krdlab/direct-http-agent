@@ -1,4 +1,4 @@
-import { Schema, Document, Model, model, connect, Types } from 'mongoose';
+import { Schema, Document, Model, model, connect, Types } from "mongoose";
 
 export interface IWebhookConfig {
   method: string;
@@ -25,9 +25,9 @@ export interface IWebhookEventModel extends IWebhookEvent, Document {}
 export interface IWebhookModel extends IWebhook, Document {}
 
 const WebhookConfigSchema = new Schema({
-  method: { type: String, default: 'POST' },
+  method: { type: String, default: "POST" },
   url: String,
-  contentType: { type: String, default: 'application/json' },
+  contentType: { type: String, default: "application/json" },
   authorization: String,
   body: String
 });
@@ -44,6 +44,6 @@ export const WebhookSchema = new Schema({
   event: { type: WebhookEventSchema }
 });
 
-export const WebhookConfig = model<IWebhookConfigModel>('WebhookConfig', WebhookConfigSchema);
-export const WebhookEvent = model<IWebhookEventModel>('WebhookEvent', WebhookEventSchema);
-export const Webhook = model<IWebhookModel>('Webhook', WebhookSchema);
+export const WebhookConfig = model<IWebhookConfigModel>("WebhookConfig", WebhookConfigSchema);
+export const WebhookEvent = model<IWebhookEventModel>("WebhookEvent", WebhookEventSchema);
+export const Webhook = model<IWebhookModel>("Webhook", WebhookSchema);

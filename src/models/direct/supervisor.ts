@@ -1,8 +1,8 @@
-import * as cluster from 'cluster';
-import { EventEmitter } from 'events';
-import { IUser } from '../entities';
-import * as data from './data';
-import { DirectClientProxy } from './client-proxy';
+import * as cluster from "cluster";
+import { EventEmitter } from "events";
+import { IUser } from "../entities";
+import * as data from "./data";
+import { DirectClientProxy } from "./client-proxy";
 
 cluster.setupMaster({
   exec: `${__dirname}/client-process.js`
@@ -24,7 +24,7 @@ export class DirectClientManager {
   }
 
   private _success() {
-    return Promise.resolve('');
+    return Promise.resolve("");
   }
 
   private _closeIfNeeded(client: DirectClientProxy | null): Promise<string> {
