@@ -18,7 +18,9 @@ RUN sed -i -e "s/else a()},j()}},getDomains/},a()}},getDomains/" node_modules/di
 
 COPY . .
 
+RUN npm run build
+
 ENV NODE_MONGODB_HOST mongodb
 EXPOSE 3000
 ENTRYPOINT ["/tini", "--"]
-CMD ["node", "src/index.js"]
+CMD ["node", "dist/index.js"]
