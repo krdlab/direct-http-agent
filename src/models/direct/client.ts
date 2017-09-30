@@ -52,6 +52,7 @@ export class Client {
     const event    = new webhook.DirectEvent(domainId, talkId, authorId, text, this._decimalStrToHLStr);
 
     webhook.findByEvent(user, event)
+      .then(hooks => hooks.map(hook => new webhook.Outgoing(hook)))
       .then(hooks => hooks.map(hook => hook.execute()))
       .then(ps => Promise.all(ps))
       .then(res => console.log(`${res.length} webhook(s) executed`)) // FIXME

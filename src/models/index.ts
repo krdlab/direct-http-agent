@@ -8,24 +8,39 @@ import fetch from "node-fetch";
 const DIRECT_REST_API_ENDPOINT = "https://api.direct4b.com/albero-app-server";
 const supervisor = new Supervisor();
 
-export async function passportAuthorized(iss: string, sub: string, profile: any, oidcAccessToken: string, refreshToken?: string, next?: any) {
+const genToken =
+  (size: number) =>
+    crypto.randomBytes(size / 2).toString("hex");
+
+export async function passportAuthorized(iss: string, sub: string, profile: any, oidcAccessToken: string, refreshToken?: string, next?: any) { // FIXME
   try {
     const directApiToken = await fetchDirectAccessToken(oidcAccessToken);
     const user = await findOrCreateUserById(sub, profile, oidcAccessToken, directApiToken);
-    supervisor.startAs(user);
+    supervisor.startClientAs(user);
     next(null, user);
   } catch (err) {
     next(err);
   }
 }
 
-const fetchDirectAccessToken = async (oidcAccessToken: string) => {
-  const res  = await fetch(`${DIRECT_REST_API_ENDPOINT}/api_access_tokens`, {method: "POST", headers: {"Authorization": `Bearer ${oidcAccessToken}`}});
+const fetchDirectAccessToken = async (oidcAccessToken: string): Promise<string> => {
+  const options = {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${oidcAccessToken}`
+    }
+  };
+  const res  = await fetch(`${DIRECT_REST_API_ENDPOINT}/api_access_tokens`, options);
   const json = await res.json();
   return json.access_token;
 };
 
-const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToken: string, directApiToken: string) => {
+const findOrCreateUserById = async (id: string, profile: any, oidcAccessToken: string, directApiToken: string): Promise<IUser> => {
+  const u = await User.findOne({ directUserId: id }).exec();
+  return await user(u, id, profile, oidcAccessToken, directApiToken).save();
+};
+
+const user = (user: IUserModel | null, id: string, profile: any, oidcAccessToken: string, directApiToken: string) => {
   // console.log(profile);
   if (user) {
     // NOTE: 既存ユーザーであれば情報を更新
@@ -46,26 +61,19 @@ const _user = (user: IUserModel | null, id: string, profile: any, oidcAccessToke
   }
 };
 
-const genToken = (size: number) => crypto.randomBytes(size / 2).toString("hex");
-
-const findOrCreateUserById = async (id: string, profile: any, oidcAccessToken: string, directApiToken: string): Promise<IUser> => {
-  const res  = await User.findOne({ directUserId: id }).exec();
-  return await _user(res, id, profile, oidcAccessToken, directApiToken).save();
-};
-
-export async function findUserByApiToken(apiToken: string) {
+export async function findUserByApiToken(apiToken: string): Promise<IUser | null> {
   return await User.where("apiToken", apiToken).findOne().exec();
 }
 
-export function findClientByUser(user: IUser) {
-  return supervisor.findByUserId(user.directUserId);
+export function findClientByUser(user: IUser): DirectClientProxy | undefined {
+  return supervisor.findClientByUserId(user.directUserId);
 }
 
-export async function restartClient(user: IUser) {
-  return supervisor.restart(user);
+export async function restartClient(user: IUser): Promise<string> {
+  return supervisor.restartClient(user);
 }
 
-export async function deleteUser(user: IUser) {
+export async function deleteUser(user: IUser): Promise<void> {
   await supervisor.removeClient(user);
   await User.remove({directUserId: user.directUserId}).exec();
 }

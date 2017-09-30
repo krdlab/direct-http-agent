@@ -27,40 +27,38 @@ export class DirectClientManager {
     return Promise.resolve("");
   }
 
-  private _closeIfNeeded(client: DirectClientProxy | null): Promise<string> {
-    if (client == null) {
-      return this._success();
-    } else {
+  private _closeIfNeeded(client?: DirectClientProxy): Promise<string> {
+    if (client) {
       this._unregister(client);
       return client.close();
+    } else {
+      return this._success();
     }
   }
 
-  startAs(user: IUser): Promise<string> {
-    const c = this.findByUserId(user.directUserId);
-    if (c == null) {
+  startClientAs(user: IUser): Promise<string> {
+    const c = this.findClientByUserId(user.directUserId);
+    if (c) {
+      return this._success(); // TODO
+    } else {
       const newWorker = cluster.fork();
       const newClient = new DirectClientProxy(user, newWorker);
       this._register(newClient);
       return newClient.start();
-    } else {
-      // TODO
-      return this._success();
     }
   }
 
-  restart(user: IUser): Promise<any> {
-    const c = this.findByUserId(user.directUserId);
-    return this._closeIfNeeded(c).then(() => this.startAs(user));
+  findClientByUserId(userId: string): DirectClientProxy | undefined {
+    return this.clients.get(userId);
   }
 
-  findByUserId(userId: string): DirectClientProxy | null {
-    const c = this.clients.get(userId);
-    return c ? c : null;
+  restartClient(user: IUser): Promise<string> {
+    const c = this.findClientByUserId(user.directUserId);
+    return this._closeIfNeeded(c).then(() => this.startClientAs(user));
   }
 
   removeClient(user: IUser): Promise<string> {
-    const c = this.findByUserId(user.directUserId);
+    const c = this.findClientByUserId(user.directUserId);
     return this._closeIfNeeded(c);
   }
 }

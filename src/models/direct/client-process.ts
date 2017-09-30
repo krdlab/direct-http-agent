@@ -26,7 +26,7 @@ const dispatch = (msg: t.IpcMessage) => {
   }
 };
 
-let client: Client | null = null;
+let client: Client | undefined;
 
 const start = (msg: t.IStart) => {
   client = new Client(msg.user);

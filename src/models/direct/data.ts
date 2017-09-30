@@ -6,7 +6,7 @@ export class Domain {
     this.id = id;
     this.name = name;
   }
-};
+}
 
 export class Talk {
   id: string;
@@ -19,4 +19,4 @@ export class Talk {
     this.type = type;
     this.userIds = userIds;
   }
-};
+}
