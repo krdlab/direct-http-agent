@@ -44,7 +44,7 @@ app.use(bodyParser.json());
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use("/webhooks", auth.checkApiToken, routers.webhooks);
-app.use("/dapi", auth.checkApiToken, routers.directapi);
+app.use("/dapi", auth.checkApiToken, auth.prepareClient, routers.directapi);
 app.use("/control", auth.checkApiToken, routers.control);
 
 app.get("/", (req, res) => {
