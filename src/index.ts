@@ -71,5 +71,9 @@ app.post("/logout", async (req, res) => {
   res.redirect("/");
 });
 
-// start service
-app.listen(3000, () => { console.log("service is listening on port 3000..."); });
+models.bootRegisteredUserClients()
+  .then(() => {
+    // start service
+    app.listen(3000, () => { console.log("service is listening on port 3000..."); });
+  })
+  .catch(console.error);
