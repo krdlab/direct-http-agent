@@ -2,6 +2,7 @@ import { IUser, IUserModel, User, IWebhookModel, Webhook } from "./entities";
 import * as webhook from "./webhook";
 import { DirectClientManager as Supervisor } from "./direct/supervisor";
 import { DirectClientProxy } from "./direct/client-proxy";
+import { bootClients } from "./boot-clients";
 import * as crypto from "crypto";
 import fetch from "node-fetch";
 
@@ -60,6 +61,10 @@ const user = (user: IUserModel | null, id: string, profile: any, oidcAccessToken
     });
   }
 };
+
+export async function bootRegisteredUserClients(): Promise<void> {
+  return bootClients(supervisor);
+}
 
 export async function findUserByApiToken(apiToken: string): Promise<IUser | null> {
   return await User.where("apiToken", apiToken).findOne().exec();
