@@ -3,18 +3,13 @@ import { IWebhook } from "../entities";
 type DecimalStringToHLString = (s: string) => string;
 
 export class DirectEvent {
-  private domainId: string;
-  private talkId: string;
-  private authorId: string;
-  private content: string;
-  private ds2hl: DecimalStringToHLString;
-
-  constructor(domainId: string, talkId: string, authorId: string, content: string, ds2hl: DecimalStringToHLString) {
-    this.domainId = domainId;
-    this.talkId = talkId;
-    this.authorId = authorId;
-    this.content = content;
-    this.ds2hl = ds2hl;
+  constructor(
+    private readonly domainId: string,
+    private readonly talkId: string,
+    private readonly authorId: string,
+    private readonly content: string,
+    private readonly ds2hl: DecimalStringToHLString
+  ) {
   }
 
   match(webhook: IWebhook): boolean {

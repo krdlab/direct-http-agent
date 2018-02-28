@@ -25,13 +25,10 @@ const idAsc   = (a: HaxeInt64, b: HaxeInt64) => ((a.high - b.high) || (a.low - b
 const byIdAsc = (a: { id: HaxeInt64 }, b: { id: HaxeInt64 }) => idAsc(a.id, b.id);
 
 export class Client {
-  private user: IUser;
-  private directjs: any;
+  private readonly directjs: any;
 
-  constructor(user: IUser) {
-    this.user = user;
+  constructor(private readonly user: IUser) {
     this.directjs = createDirectAPI(user);
-
     this._int64ToDecimalStr = this._int64ToDecimalStr.bind(this);
     this._decimalStrToHLStr = this._decimalStrToHLStr.bind(this);
     this._handleTextMessage = this._handleTextMessage.bind(this);
@@ -52,7 +49,7 @@ export class Client {
     const event    = new webhook.DirectEvent(domainId, talkId, authorId, text, this._decimalStrToHLStr);
 
     webhook.findByEvent(user, event)
-      .then(hooks => hooks.map(hook => new webhook.Outgoing(hook)))
+      .then(hooks => hooks.map(hook => new webhook.Outgoing(hook.config)))
       .then(hooks => hooks.map(hook => hook.execute()))
       .then(ps => Promise.all(ps))
       .then(res => console.log(`${res.length} webhook(s) executed`)) // FIXME
