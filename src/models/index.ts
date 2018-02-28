@@ -18,7 +18,7 @@ export async function passportAuthorized(iss: string, sub: string, profile: any,
     const directApiToken = await fetchDirectAccessToken(oidcAccessToken);
     const user = await findOrCreateUserById(sub, profile, oidcAccessToken, directApiToken);
     supervisor.startClientAs(user);
-    next(null, user);
+    next(undefined, user);
   } catch (err) {
     next(err);
   }
