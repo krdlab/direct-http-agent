@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as webhook from "../webhook";
 import { IUser } from "../entities";
-import * as data from "./data";
+import { Domain, Talk } from "./Types";
 
 const DirectAPI = require("direct-js").DirectAPI;
 
@@ -90,22 +90,22 @@ export class Client {
 
   // --- API
 
-  getDomains(): data.Domain[] {
+  getDomains(): Domain[] {
     const ds  = this._getDomains();
     const str = this._int64ToDecimalStr;
     const res = ds
       .sort(byIdAsc)
-      .map((d: any) => (new data.Domain(str(d.id), d.domainInfo.name)));
+      .map((d: any) => (new Domain(str(d.id), d.domainInfo.name)));
     return res;
   }
 
-  getTalks(domainId: string): data.Talk[] {
+  getTalks(domainId: string): Talk[] {
     const ts  = this._getTalks();
     const str = this._int64ToDecimalStr;
     const res = ts
       .filter((t: any) => str(t.domainId) === domainId)
       .sort(byIdAsc)
-      .map((t: any) => (new data.Talk(
+      .map((t: any) => (new Talk(
         str(t.id),
         t.name,
         t.type[0],

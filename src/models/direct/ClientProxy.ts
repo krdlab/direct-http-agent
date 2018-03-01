@@ -1,8 +1,8 @@
 import { Worker } from "cluster";
 import { EventEmitter } from "events";
 import { IUser } from "../entities";
-import { Domain, Talk } from "./data";
-import * as t from "./types";
+import { Domain, Talk } from "./Types";
+import * as t from "./Types";
 
 export class DirectClientProxy {
   private response: EventEmitter;

@@ -1,7 +1,7 @@
 import "../datasource";
 import { IUser } from "../entities";
-import { Client } from "./client";
-import * as t from "./types";
+import { Client } from "./Client";
+import * as t from "./Types";
 
 process.on("message", (msg) => {
   dispatch(msg);

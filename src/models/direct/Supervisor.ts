@@ -1,11 +1,10 @@
 import * as cluster from "cluster";
 import { EventEmitter } from "events";
 import { IUser } from "../entities";
-import * as data from "./data";
-import { DirectClientProxy } from "./client-proxy";
+import { DirectClientProxy } from "./ClientProxy";
 
 cluster.setupMaster({
-  exec: `${__dirname}/client-process.js`
+  exec: `${__dirname}/ClientProcess.js`
 });
 
 export class DirectClientManager {
