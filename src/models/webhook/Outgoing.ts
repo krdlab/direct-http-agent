@@ -1,11 +1,8 @@
 import fetch from "node-fetch";
-import { IWebhook, IWebhookConfig } from "../entities";
+import { IWebhookConfig } from "../entities";
 
 export class Outgoing {
-  private config: IWebhookConfig;
-
-  constructor(webhook: IWebhook) {
-    this.config = webhook.config;
+  constructor(private readonly config: IWebhookConfig) {
   }
 
   async execute() {

@@ -1,7 +1,7 @@
 import { IUser, IUserModel, User, IWebhookModel, Webhook } from "./entities";
 import * as webhook from "./webhook";
-import { DirectClientManager as Supervisor } from "./direct/supervisor";
-import { DirectClientProxy } from "./direct/client-proxy";
+import { DirectClientManager as Supervisor } from "./direct/Supervisor";
+import { DirectClientProxy } from "./direct/ClientProxy";
 import { bootClients } from "./boot-clients";
 import * as crypto from "crypto";
 import fetch from "node-fetch";

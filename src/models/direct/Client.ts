@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as webhook from "../webhook";
 import { IUser } from "../entities";
-import * as data from "./data";
+import { Domain, Talk } from "./Types";
 
 const DirectAPI = require("direct-js").DirectAPI;
 
@@ -25,13 +25,10 @@ const idAsc   = (a: HaxeInt64, b: HaxeInt64) => ((a.high - b.high) || (a.low - b
 const byIdAsc = (a: { id: HaxeInt64 }, b: { id: HaxeInt64 }) => idAsc(a.id, b.id);
 
 export class Client {
-  private user: IUser;
-  private directjs: any;
+  private readonly directjs: any;
 
-  constructor(user: IUser) {
-    this.user = user;
+  constructor(private readonly user: IUser) {
     this.directjs = createDirectAPI(user);
-
     this._int64ToDecimalStr = this._int64ToDecimalStr.bind(this);
     this._decimalStrToHLStr = this._decimalStrToHLStr.bind(this);
     this._handleTextMessage = this._handleTextMessage.bind(this);
@@ -52,7 +49,7 @@ export class Client {
     const event    = new webhook.DirectEvent(domainId, talkId, authorId, text, this._decimalStrToHLStr);
 
     webhook.findByEvent(user, event)
-      .then(hooks => hooks.map(hook => new webhook.Outgoing(hook)))
+      .then(hooks => hooks.map(hook => new webhook.Outgoing(hook.config)))
       .then(hooks => hooks.map(hook => hook.execute()))
       .then(ps => Promise.all(ps))
       .then(res => console.log(`${res.length} webhook(s) executed`)) // FIXME
@@ -93,22 +90,22 @@ export class Client {
 
   // --- API
 
-  getDomains(): data.Domain[] {
+  getDomains(): Domain[] {
     const ds  = this._getDomains();
     const str = this._int64ToDecimalStr;
     const res = ds
       .sort(byIdAsc)
-      .map((d: any) => (new data.Domain(str(d.id), d.domainInfo.name)));
+      .map((d: any) => (new Domain(str(d.id), d.domainInfo.name)));
     return res;
   }
 
-  getTalks(domainId: string): data.Talk[] {
+  getTalks(domainId: string): Talk[] {
     const ts  = this._getTalks();
     const str = this._int64ToDecimalStr;
     const res = ts
       .filter((t: any) => str(t.domainId) === domainId)
       .sort(byIdAsc)
-      .map((t: any) => (new data.Talk(
+      .map((t: any) => (new Talk(
         str(t.id),
         t.name,
         t.type[0],

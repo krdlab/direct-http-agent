@@ -1,17 +1,13 @@
 import { Worker } from "cluster";
 import { EventEmitter } from "events";
 import { IUser } from "../entities";
-import { Domain, Talk } from "./data";
-import * as t from "./types";
+import { Domain, Talk } from "./Types";
+import * as t from "./Types";
 
 export class DirectClientProxy {
-  private user: IUser;
-  private worker: Worker;
   private response: EventEmitter;
 
-  constructor(user: IUser, worker: Worker) {
-    this.user = user;
-    this.worker = worker;
+  constructor(private readonly user: IUser, private readonly worker: Worker) {
     this.response = new EventEmitter();
     this._handleMessage = this._handleMessage.bind(this);
 
