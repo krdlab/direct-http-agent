@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as webhook from "../webhook";
 import { IUser } from "../entities";
 import { Domain, Talk } from "./Types";
+import * as bigInt from 'big-integer';
 
 const DirectAPI = require("direct-js").DirectAPI;
 
@@ -31,6 +32,7 @@ export class Client {
     this.directjs = createDirectAPI(user);
     this._int64ToDecimalStr = this._int64ToDecimalStr.bind(this);
     this._decimalStrToHLStr = this._decimalStrToHLStr.bind(this);
+    this._hlStrToDecimalStr = this._hlStrToDecimalStr.bind(this);
     this._handleTextMessage = this._handleTextMessage.bind(this);
   }
 
@@ -42,15 +44,15 @@ export class Client {
   _handleTextMessage(talk: any, author: any, msg: any) { // TODO
     const user = this.user;
 
-    const domainId = talk.rooms[talk.room].domainId;
-    const talkId   = talk.room;
-    const authorId = author.id;
+    const domainId = this._hlStrToDecimalStr(talk.rooms[talk.room].domainId);
+    const talkId   = this._hlStrToDecimalStr(talk.room);
+    const authorId = this._hlStrToDecimalStr(author.id);
     const text     = msg.content;
-    const event    = new webhook.DirectEvent(domainId, talkId, authorId, text, this._decimalStrToHLStr);
+    const event    = new webhook.DirectEvent(domainId, talkId, authorId, text);
 
     webhook.findByEvent(user, event)
       .then(hooks => hooks.map(hook => new webhook.Outgoing(hook.config)))
-      .then(hooks => hooks.map(hook => hook.execute()))
+      .then(hooks => hooks.map(hook => hook.execute(event)))
       .then(ps => Promise.all(ps))
       .then(res => console.log(`${res.length} webhook(s) executed`)) // FIXME
       .catch(console.error); // FIXME: save as event history
@@ -65,11 +67,15 @@ export class Client {
     return `_${i.high}_${i.low}`;
   }
 
-  // FIXME: doesn't work
-  // private _hlStrToDecimalStr(s: string): string {
-  //   const res = /^_(-?\d*)_(-?\d*)$/.exec(s);
-  //   return this._int64ToDecimalStr({high: Number(res[1]), low: Number(res[2])});
-  // }
+  private _hlStrToDecimalStr(s: string): string {
+    const res = /^_(-?\d*)_(-?\d*)$/.exec(s);
+    if (!res) {
+      return "";
+    }
+    const h = bigInt(res[1]).and(bigInt("ffffffff", 16));
+    const l = bigInt(res[2]).and(bigInt("ffffffff", 16));
+    return h.shiftLeft(32).or(l).toString();
+  }
 
   private _getDomains(): any[] { // TODO
     return this.directjs.data.getDomains();

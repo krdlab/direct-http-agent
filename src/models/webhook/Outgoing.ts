@@ -1,12 +1,13 @@
 import fetch from "node-fetch";
 import { IWebhookConfig } from "../entities";
+import { DirectEvent } from "./DirectEvent";
 
 export class Outgoing {
   constructor(private readonly config: IWebhookConfig) {
   }
 
-  async execute() {
-    const res  = await fetch(this.url, this.options);
+  async execute(event: DirectEvent) {
+    const res  = await fetch(this.url, this.options(event));
     return await res.json();
   }
 
@@ -14,11 +15,11 @@ export class Outgoing {
     return this.config.url;
   }
 
-  private get options() {
+  private options(event: DirectEvent) {
     return {
       method: this.method,
       headers: this.headers,
-      body: this.config.body
+      body: JSON.stringify(event)
     };
   }
 
@@ -27,16 +28,6 @@ export class Outgoing {
   }
 
   private get headers() {
-    const hs: {[index: string]: string} = {
-      "Content-Type": this.contentType
-    };
-    if (this.config.authorization) {
-      hs["Authorization"] = this.config.authorization;
-    }
-    return hs;
-  }
-
-  private get contentType() {
-    return (this.config.contentType || "application/x-www-form-urlencoded");
+    return this.config.headers;
   }
 }

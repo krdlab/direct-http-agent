@@ -63,15 +63,19 @@ html
                 pre
                   code(class="bash").
                     $ curl -s -H 'Authorization: Bearer #{user.apiToken}' -H 'Content-Type: application/json' -X POST #{serviceBaseUrl}/webhooks -d '{
-                      "name":"jenkins-build"
+                      "name":"jenkins-build",
                       "config": {
                         "method": "POST",
-                        "url": "https://your-jenkins-host/job/your-job/build?token=your-jenkins-api-token"
+                        "url": "https://your-jenkins-host/job/your-job/build",
+                        "headers": {
+                          "Content-Type": "application/json",
+                          "x-api-key": "your api key"
+                        }
                       },
                       "event": {
                         "domainId": "target-domian-id",
                         "talkId": "target-talk-id",
-                        "trigger": "ビルドしてくれ"
+                        "trigger": "(J|j)enkins build (\\w+)"
                       }
                     }'
           div(class="card hoverable")

@@ -11,6 +11,7 @@
   "author": "Sho Kuroda <krdlab@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "big-integer": "^1.6.43",
     "body-parser": "^1.18.3",
     "direct-js": "^0.1.31",
     "dotenv": "^4.0.0",
