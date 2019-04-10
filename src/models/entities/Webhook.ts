@@ -3,9 +3,7 @@ import { Schema, Document, Model, model, connect, Types } from "mongoose";
 export interface IWebhookConfig {
   method: string;
   url: string;
-  contentType: string;
-  authorization?: string;
-  body?: string;
+  headers: { [index: string]: string };
 }
 
 export interface IWebhookEvent {
@@ -27,9 +25,7 @@ export interface IWebhookModel extends IWebhook, Document {}
 const WebhookConfigSchema = new Schema({
   method: { type: String, default: "POST" },
   url: String,
-  contentType: { type: String, default: "application/json" },
-  authorization: String,
-  body: String
+  headers: Schema.Types.Mixed
 });
 
 const WebhookEventSchema = new Schema({

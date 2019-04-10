@@ -5,6 +5,8 @@ services:
     volumes:
       - "./data/mongodb:/data/db"
   agent:
+    environment:
+      NODE_ENV: development
     volumes:
       - "./etc/agent:/etc/agent"
       - "./data/storage.local:/data/storage.local"

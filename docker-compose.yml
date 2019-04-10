@@ -9,10 +9,15 @@ services:
       - "/var/lib/direct-http-agent/mongodb:/data/db"
   agent:
     build: .
+    init: true
+    environment:
+      NODE_ENV: production
     ports:
       - "3000:3000"
     depends_on:
       - mongodb
     links:
       - mongodb
-    init: true
+    volumes:
+      - "/etc/direct-http-agent/agent:/etc/agent"
+      - "/var/lib/direct-http-agent/storage.local:/data/storage.local"
