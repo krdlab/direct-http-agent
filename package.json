@@ -19,7 +19,7 @@
     "express-session": "^1.15.6",
     "helmet": "^3.16.0",
     "mongoose": "^4.11.6",
-    "node-fetch": "^1.7.2",
+    "node-fetch": "^2.6.1",
     "passport": "^0.4.0",
     "passport-direct-openidconnect": "^0.1.1",
     "pug": "^2.0.3"
