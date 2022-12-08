@@ -35,7 +35,7 @@
     "@types/node-fetch": "^1.6.7",
     "@types/passport": "^0.3.4",
     "@types/pug": "^2.0.4",
-    "eslint": "^4.6.1",
+    "eslint": "^8.29.0",
     "tslint": "^5.7.0",
     "typescript": "^2.5.2"
   }
